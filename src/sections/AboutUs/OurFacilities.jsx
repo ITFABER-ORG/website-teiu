@@ -8,7 +8,7 @@ function OurFacilities({data}) {
 
   const sectionRef = useRef(null);
   useEffect(()=> {
-    setFacilities(data?.components?.our_dependencies.texts)
+    setFacilities(data?.components?.our_dependencies?.texts)
   },[data])
 
   useEffect(() => {

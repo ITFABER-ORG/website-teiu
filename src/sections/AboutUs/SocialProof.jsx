@@ -1,16 +1,33 @@
 import { Lightbulb, Rocket, Box } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-function SocialProof() {
+const iconMap = {
+  1: Lightbulb,
+  2: Rocket,
+  3: Box,
+};
+
+function SocialProof({ data }) {
   const [visible, setVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const ref = useRef(null);
 
+  const texts = data?.texts || {};
+
+  const cards = [1, 2, 3].map((i) => ({
+    title: texts[`card${i}_title`]?.content || "",
+    desc: texts[`card${i}_desc`]?.content || "",
+    Icon: iconMap[i],
+  }));
+
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.1 } 
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.1 }
     );
+
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
@@ -19,9 +36,10 @@ function SocialProof() {
     const handleScroll = () => {
       if (!ref.current) return;
       const rect = ref.current.getBoundingClientRect();
-      const isOut = rect.top > window.innerHeight * 0.7; 
+      const isOut = rect.top > window.innerHeight * 0.7;
       setIsLeaving(isOut);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -40,51 +58,38 @@ function SocialProof() {
     >
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 lg:gap-8 items-center justify-items-center">
         
-        {/* Card 1 */}
-        <div
-          className={`w-full max-w-[400px] md:max-w-none aspect-square md:aspect-[5/4.6] bg-[rgba(255,255,255,0.31)] backdrop-blur-md rounded-2xl shadow-md border border-white/30 p-8 text-center relative flex flex-col justify-center items-center ${getAnimation()}`}
-        >
-          <div className="absolute -top-5 bg-white rounded-full p-3 shadow-md border border-white/30">
-            <Lightbulb className="w-8 h-8 md:w-9 md:h-9 text-gray-700" />
-          </div>
-          <h3 className="mt-4 font-bold text-blue-900 uppercase text-xl md:text-2xl tracking-tight">
-            INOVAÇÃO
-          </h3>
-          <p className="mt-2 text-lg md:text-xl text-gray-600 leading-tight">
-            O parque industrial mais moderno do setor
-          </p>
-        </div>
+        {cards.map((card, index) => {
+          const Icon = card.Icon;
+          const delay =
+            index === 1 ? "md:delay-200" : index === 2 ? "md:delay-500" : "";
 
-        {/* Card 2 */}
-        <div
-          className={`w-full max-w-[400px] md:max-w-none aspect-square md:aspect-[5/4.6] bg-[rgba(255,255,255,0.31)] backdrop-blur-md rounded-2xl shadow-md border border-white/30 p-8 text-center relative flex flex-col justify-center items-center ${getAnimation("md:delay-200")}`}
-        >
-          <div className="absolute -top-5 bg-white rounded-full p-3 shadow-md border border-white/30">
-            <Rocket className="w-8 h-8 md:w-9 md:h-9 text-gray-700" />
-          </div>
-          <h3 className="mt-4 font-bold text-blue-900 uppercase text-xl md:text-2xl tracking-tight">
-            IMPACTO
-          </h3>
-          <p className="mt-2 text-lg md:text-xl text-gray-600 leading-tight">
-            X cidades na Bahia e em mais de X estados
-          </p>
-        </div>
+          return (
+            <div
+              key={index}
+              className={`w-full max-w-[400px] md:max-w-none aspect-square md:aspect-[5/4.6] bg-[rgba(255,255,255,0.31)] backdrop-blur-md rounded-2xl shadow-md border border-white/30 p-8 text-center relative flex flex-col justify-center items-center ${getAnimation(
+                delay
+              )}`}
+            >
+              <div className="absolute -top-5 bg-white rounded-full p-3 shadow-md border border-white/30">
+                {Icon && (
+                  <Icon className="w-8 h-8 md:w-9 md:h-9 text-gray-700" />
+                )}
+              </div>
 
-        {/* Card 3 */}
-        <div
-          className={`w-full max-w-[400px] md:max-w-none aspect-square md:aspect-[5/4.6] bg-[rgba(255,255,255,0.31)] backdrop-blur-md rounded-2xl shadow-md border border-white/30 p-8 text-center relative flex flex-col justify-center items-center ${getAnimation("md:delay-500")}`}
-        >
-          <div className="absolute -top-5 bg-white rounded-full p-3 shadow-md border border-white/30">
-            <Box className="w-8 h-8 md:w-9 md:h-9 text-gray-700" />
-          </div>
-          <h3 className="mt-4 font-bold text-blue-900 uppercase text-xl md:text-2xl tracking-tight">
-            PRODUÇÃO
-          </h3>
-          <p className="mt-2 text-lg md:text-xl text-gray-600 leading-tight">
-            16 milhões de kg produzidos mensalmente
-          </p>
-        </div>
+              {/* TÍTULO (HTML) */}
+              <h3
+                className="mt-4 font-bold text-blue-900 uppercase text-xl md:text-2xl tracking-tight"
+                dangerouslySetInnerHTML={{ __html: card.title }}
+              />
 
+              {/* DESCRIÇÃO (HTML) */}
+              <div
+                className="mt-2 text-lg md:text-xl text-gray-600 leading-tight"
+                dangerouslySetInnerHTML={{ __html: card.desc }}
+              />
+            </div>
+          );
+        })}
       </div>
     </section>
   );

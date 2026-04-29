@@ -27,7 +27,7 @@ function AboutUs() {
         fetchPage();
       }, []);
       useEffect(()=> {
-        console.log('aaaaaaaaaaaaaaaaaa',pageData?.components?.banner?.assets?.banner_home?.url)
+        console.log('aaaaaaaaaaaaaaaaaa',pageData)
       },[pageData])
     return ( 
     <>
@@ -40,8 +40,8 @@ function AboutUs() {
         <OurHistory data={pageData}/>
         <FounderSection data={pageData}/>
         <div className="bg-gradient-to-br from-[#02D1FF] to-[#074B9A] pt-20 rounded-t-4xl">
-           <SocialProof/>
-           <OurMission/>
+           <SocialProof data={pageData?.components?.social_proof}/>
+           <OurMission data={pageData?.components?.our_missions}/>
 
            <Footer/>
         </div>

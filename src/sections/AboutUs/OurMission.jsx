@@ -1,41 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-const tabs = {
-  mission: {
-    title: "Nossa Missão",
-    image: "/assets/img/mission.png",
-    items: [
-      {
-        icon: "/assets/img/sustentabilidade.svg",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      },
-      {
-        icon: "/assets/img/medal.svg",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      },
-    ],
-  },
-  vision: {
-    title: "Nossa Visão",
-    image: "/assets/img/ourValues.png",
-    items: [
-      { icon: "👁️", text: "Ser referência no mercado com inovação e excelência." },
-      { icon: "🚀", text: "Crescer continuamente e impactar positivamente." },
-    ],
-  },
-  values: {
-    title: "Nossos Valores",
-    image: "/assets/img/ourVision.png",
-    items: [
-      { icon: "🤝", text: "Ética, transparência e compromisso." },
-      { icon: "💡", text: "Inovação e foco no cliente." },
-    ],
-  },
-};
-
-function OurMission() {
+function OurMission({ data }) {
   const [activeTab, setActiveTab] = useState("mission");
-  const [displayedTab, setDisplayedTab] = useState("mission"); // 👈 controla imagem
+  const [displayedTab, setDisplayedTab] = useState("mission");
   const [pulse, setPulse] = useState(false);
 
   const [visible, setVisible] = useState(false);
@@ -43,8 +10,49 @@ function OurMission() {
 
   const ref = useRef(null);
 
-  const current = tabs[activeTab];
-  const displayed = tabs[displayedTab];
+  // =============================
+  // HELPERS
+  // =============================
+
+  const getText = (key) => {
+    return data?.texts?.[key]?.content?.replace(/<[^>]+>/g, "") || "";
+  };
+
+  const getAssetUrl = (asset) => {
+    if (!asset?.url) return null;
+    return `http://localhost:8080/storage/${asset.url}`;
+  };
+
+  const getHeartImageByTab = (tab) => {
+    const map = {
+      mission: data?.assets?.heart1_img,
+      vision: data?.assets?.heart2_img,
+      values: data?.assets?.heart3_img,
+    };
+
+    return getAssetUrl(map[tab]);
+  };
+
+  const getCards = (type) => {
+    if (!data?.texts) return [];
+
+    return Object.keys(data.texts)
+      .filter(
+        (key) =>
+          key.includes(type) &&
+          key.includes("card") &&
+          !key.includes("_icon")
+      )
+      .sort()
+      .map((key) => {
+        const iconKey = `${key}_icon`;
+
+        return {
+          text: getText(key),
+          icon: getAssetUrl(data?.assets?.[iconKey]),
+        };
+      });
+  };
 
   const isImageUrl = (value) => {
     if (typeof value !== "string") return false;
@@ -60,7 +68,23 @@ function OurMission() {
     );
   };
 
-  // 🔥 troca com animação
+  // =============================
+  // TAB DATA DINÂMICO
+  // =============================
+
+  const current = {
+    title: getText(`${activeTab}_title`),
+    items: getCards(activeTab),
+  };
+
+  const displayed = {
+    image: getHeartImageByTab(displayedTab),
+  };
+
+  // =============================
+  // HANDLERS
+  // =============================
+
   const handleTabChange = (tab) => {
     if (tab === activeTab) return;
 
@@ -70,10 +94,13 @@ function OurMission() {
     setTimeout(() => {
       setDisplayedTab(tab);
       setPulse(false);
-    }, 400); // duração do "batimento"
+    }, 400);
   };
 
-  // 🔥 ENTRADA
+  // =============================
+  // ANIMAÇÕES
+  // =============================
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -86,7 +113,6 @@ function OurMission() {
     return () => observer.disconnect();
   }, []);
 
-  // 🔥 SAÍDA
   useEffect(() => {
     const handleScroll = () => {
       if (!ref.current) return;
@@ -111,6 +137,10 @@ function OurMission() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // =============================
+  // RENDER
+  // =============================
+
   return (
     <section
       ref={ref}
@@ -120,10 +150,10 @@ function OurMission() {
           : "opacity-0 translate-y-10"
       }`}
     >
-      {/* Tabs */}
+      {/* TABS */}
       <div className="flex justify-center mb-15">
         <div className="flex bg-white rounded-full p-1 shadow-md">
-          {Object.keys(tabs).map((tab) => (
+          {["mission", "vision", "values"].map((tab) => (
             <button
               key={tab}
               onClick={() => handleTabChange(tab)}
@@ -143,7 +173,7 @@ function OurMission() {
         </div>
       </div>
 
-      {/* Content */}
+      {/* CONTENT */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-12 px-6">
         
         {/* IMAGE */}
@@ -171,29 +201,25 @@ function OurMission() {
               : "opacity-0 translate-y-6"
           }`}
         >
-          <h2
-            key={current.title}
-            className="text-2xl font-semibold mb-6 animate-fadeSlide"
-          >
+          <h2 className="text-2xl font-semibold mb-6">
             {current.title}
           </h2>
 
           <div className="flex flex-col gap-4">
             {current.items.map((item, index) => (
               <div
-                key={index + activeTab}
-                className="flex items-start gap-3 bg-[#01459A] p-4 rounded-xl shadow-md animate-fadeSlide"
-                style={{ animationDelay: `${index * 150}ms` }}
+                key={index}
+                className="flex items-start gap-3 bg-[#01459A] p-4 rounded-xl shadow-md"
               >
-                <span className="flex items-center justify-center w-12 h-12 mr-4 ml-4">
+                <span className="flex items-center justify-center w-12 h-12">
                   {isImageUrl(item.icon) ? (
                     <img
                       src={item.icon}
                       alt="icon"
-                      className="w-full h-full object-contain drop-shadow-md"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
-                    <span className="text-xl">{item.icon}</span>
+                    <span className="text-xl">✨</span>
                   )}
                 </span>
 
