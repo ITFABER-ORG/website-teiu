@@ -5,15 +5,21 @@ function CardContact({ icon, title, description, action }) {
 
     switch (action) {
       case "instagram":
-        url = "https://instagram.com/teiuoficial";
+        url = `https://instagram.com/${description}`;
         break;
 
-      case "whatsapp":
-        url = "https://wa.me/5577988364540"; 
-        break;
-
+        case "whatsapp": {
+          let phone = description.replace(/\D/g, "");
+        
+          if (!phone.startsWith("55")) {
+            phone = `55${phone}`;
+          }
+        
+          url = `https://wa.me/${phone}`;
+          break;
+        }
       case "email":
-        url = "https://mail.google.com/mail/?view=cm&to=icaro2rodrigues@gmail.com";
+        url = `https://mail.google.com/mail/?view=cm&to=${description}`;
         break;
 
       default:
