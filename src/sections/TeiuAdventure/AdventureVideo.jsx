@@ -1,8 +1,13 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState} from 'react';
 
-function AdventureVideo() {
+function AdventureVideo({data}) {
   const videoRef = useRef(null);
-
+  const [img, setImg] = useState(null);
+  
+  useEffect(()=> {
+      console.log('lepo',data?.assets?.banner_video_home?.url)
+    setImg(data?.assets?.banner_video_home?.url)
+  },[data])
   useEffect(() => {
     const options = { threshold: 0.5 };
 
@@ -26,7 +31,7 @@ function AdventureVideo() {
     <section className="relative w-full h-[60vh] md:h-[100vh] overflow-hidden bg-black flex items-center justify-center">
       <video
         ref={videoRef}
-        src="/assets/video/video-ciclista.mp4" 
+        src={` http://127.0.0.1:8080/storage/${img}`} 
         muted
         loop
         playsInline
