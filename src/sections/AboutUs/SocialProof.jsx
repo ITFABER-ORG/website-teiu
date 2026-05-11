@@ -14,6 +14,10 @@ function SocialProof({ data }) {
 
   const texts = data?.texts || {};
 
+  useEffect(()=> {
+    console.log('asdsadqwraesdfh rtghyrt5y ',data)
+  },[data])
+
   const cards = [1, 2, 3].map((i) => ({
     title: texts[`card${i}_title`]?.content || "",
     desc: texts[`card${i}_desc`]?.content || "",

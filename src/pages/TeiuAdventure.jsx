@@ -7,26 +7,34 @@ import AdventureImpactText from '../sections/TeiuAdventure/AdventureImpactText';
 import AdventureVideo from '../sections/TeiuAdventure/AdventureVideo';
 import AdventureAthletes from '../sections/TeiuAdventure/AdventureAthletes';
 import AdventureEvents from '../sections/TeiuAdventure/AdventureEvents';
+import { useLanguage } from '../contexts/LanguageContext';
 
 import { useEffect, useState } from 'react';
 
 function TeiuAdventure() {
   const [pageData, setPageData] = useState(' ');
-      
-        useEffect(() => {
-          const fetchPage = async () => {
-            try {
-              const response = await fetch("http://127.0.0.1:8000/api/pageWebsite/teiu-adventure");
-              const data = await response.json();
-              console.log(' todos conteudos' , data)
-              setPageData(data);
-            } catch (error) {
-              console.error("Erro ao buscar página:", error);
-            }
-          };
-      
-          fetchPage();
-        }, []);
+  const { language, setLanguage, isEnglish } = useLanguage();
+
+
+  useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/pageWebsite/teiu-adventure?language=${language}`
+        );
+  
+        const data = await response.json();
+  
+        console.log(data);
+  
+        setPageData(data);
+      } catch (error) {
+        console.error("Erro ao buscar página:", error);
+      }
+    };
+  
+    fetchPage();
+  }, [language]);
 
 
   return (

@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 
 class pageController extends Controller
 {
-    public function index($path)
+    public function index(Request $request, $path)
     {
+        $language = $request->query('language', 'pt-br');
+    
         $page = Pages::with([
-            'components' => function ($query) {
+            'components' => function ($query) use ($language) {
                 $query->where('components.status', 'in_production')
+                      ->where('components.language', $language)
                       ->with(['assets', 'texts']);
             },
             'customizationComponent'
@@ -48,8 +51,9 @@ class pageController extends Controller
                 return [
                     'id' => $component->id,
                     'key' => $component->key,
-                    'texts' => $textsByKey,
-                    'assets' => $assetsByKey,
+                    'language' => $component->language,
+                    'texts' => $textsByKey ?? new \stdClass(),
+                    'assets' => $assetsByKey ?? new \stdClass(),
                 ];
             });
     
@@ -57,6 +61,7 @@ class pageController extends Controller
             'id' => $page->id,
             'name' => $page->name,
             'path' => $page->path,
+            'language' => $language,
             'components' => $componentsByKey,
             'customization_component' => $page->customizationComponent
         ]);

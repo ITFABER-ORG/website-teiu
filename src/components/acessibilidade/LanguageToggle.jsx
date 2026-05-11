@@ -1,14 +1,18 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const LanguageToggle = () => {
   const { i18n } = useTranslation();
-  
-  // Verifica se o idioma atual é o inglês
-  const isEnglish = i18n.language === 'en';
+
+  const { language, setLanguage, isEnglish } = useLanguage();
 
   const toggleLanguage = () => {
-    i18n.changeLanguage(isEnglish ? 'pt' : 'en');
+    const newLanguage = isEnglish ? 'pt-br' : 'en';
+
+    setLanguage(newLanguage);
+
+    i18n.changeLanguage(newLanguage === 'pt-br' ? 'pt' : 'en');
   };
 
   return (
@@ -23,22 +27,30 @@ const LanguageToggle = () => {
         className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out ${
           isEnglish ? 'translate-x-8' : 'translate-x-0'
         }`}
-      ></div>
+      />
 
-      {/*Bandeira do Brasil*/}
-      <div className={`flex-1 flex justify-center items-center z-10 transition-opacity duration-300 ${isEnglish ? 'opacity-40 grayscale' : 'opacity-100'}`}>
-        <img 
-          src="/assets/img/brasil.png" 
-          alt="Português" 
+      {/* Bandeira BR */}
+      <div
+        className={`flex-1 flex justify-center items-center z-10 transition-opacity duration-300 ${
+          isEnglish ? 'opacity-40 grayscale' : 'opacity-100'
+        }`}
+      >
+        <img
+          src="/assets/img/brasil.png"
+          alt="Português"
           className="w-5 h-auto drop-shadow-sm rounded-sm"
         />
       </div>
 
-      {/*Bandeira dos EUA*/}
-      <div className={`flex-1 flex justify-center items-center z-10 transition-opacity duration-300 ${isEnglish ? 'opacity-100' : 'opacity-40 grayscale'}`}>
-        <img 
-          src="/assets/img/eua.png" 
-          alt="English" 
+      {/* Bandeira EUA */}
+      <div
+        className={`flex-1 flex justify-center items-center z-10 transition-opacity duration-300 ${
+          isEnglish ? 'opacity-100' : 'opacity-40 grayscale'
+        }`}
+      >
+        <img
+          src="/assets/img/eua.png"
+          alt="English"
           className="w-5 h-auto drop-shadow-sm rounded-sm"
         />
       </div>

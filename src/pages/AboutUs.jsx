@@ -9,23 +9,32 @@ import OurMission from "../sections/AboutUs/OurMission.jsx";
 import SocialProof from "../sections/AboutUs/SocialProof.jsx";
 import Footer from "../components/Footer.jsx";
 
+import { useLanguage } from "../contexts/LanguageContext.jsx";
+
 function AboutUs() {
   const [pageData, setPageData] = useState(' ');
+      const { language, setLanguage, isEnglish } = useLanguage();
+    
     
       useEffect(() => {
         const fetchPage = async () => {
           try {
-            const response = await fetch("http://127.0.0.1:8000/api/pageWebsite/empresa");
+            const response = await fetch(
+              `http://127.0.0.1:8000/api/pageWebsite/empresa?language=${language}`
+            );
+      
             const data = await response.json();
-            console.log(data)
+      
+            console.log('achado', data);
+      
             setPageData(data);
           } catch (error) {
             console.error("Erro ao buscar página:", error);
           }
         };
-    
+      
         fetchPage();
-      }, []);
+      }, [language]);
       useEffect(()=> {
         console.log('aaaaaaaaaaaaaaaaaa',pageData)
       },[pageData])

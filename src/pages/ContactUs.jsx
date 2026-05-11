@@ -3,23 +3,33 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import BannerContactSession from "../sections/ContactUs/BannerContact";
 import ContactForm from "../sections/ContactUs/ContactForm";
+import { useLanguage } from '../contexts/LanguageContext';
+
 
 function ConatctUs() {
     const [pageData, setPageData] = useState(' ');
-        useEffect(() => {
-              const fetchPage = async () => {
-                try {
-                  const response = await fetch("http://127.0.0.1:8000/api/pageWebsite/contato");
-                  const data = await response.json();
-                  console.log('gerral', data.components)
-                  setPageData(data);
-                } catch (error) {
-                  console.error("Erro ao buscar página:", error);
-                }
-              };
-          
-              fetchPage();
-            }, []);
+     const { language, setLanguage, isEnglish } = useLanguage();
+   
+   
+     useEffect(() => {
+       const fetchPage = async () => {
+         try {
+           const response = await fetch(
+             `http://127.0.0.1:8000/api/pageWebsite/contato?language=${language}`
+           );
+     
+           const data = await response.json();
+     
+           console.log(data);
+     
+           setPageData(data);
+         } catch (error) {
+           console.error("Erro ao buscar página:", error);
+         }
+       };
+     
+       fetchPage();
+     }, [language]);
     
     
 
