@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import RodaSustentabilidade from '../sections/sustainability/RodaSustentabilidade';
 import ExposeItem from '../sections/sustainability/ExposeItem';
-import Stamp from '../sections/sustainability/stamp';
+import Stamp from '../sections/sustainability/Stamp';
 import Features from '../sections/sustainability/Features';
 
 const SustentabilidadePage = () => {
