@@ -12,7 +12,7 @@ function OurHistory({ data }) {
   const containerRef = useRef(null);
   const ticking = useRef(false);
 
-    const buildTimeline = () => {
+  const buildTimeline = () => {
     const timelineData = data?.components?.timeline;
 
     if (!timelineData) return [];
@@ -20,19 +20,28 @@ function OurHistory({ data }) {
     const texts = timelineData.texts || {};
     const assets = timelineData.assets || {};
 
-    const events = Object.keys(texts)
-      .filter((key) => key.startsWith("event_") && key.includes("_title"))
-      .map((key) => {
-        const number = key.split("_")[1]; 
+    // mantém a ordem recebida do backend
+    const orderedTexts = Object.values(texts);
 
-        return {
-          year: `Evento ${number}`,
-          text: texts[key]?.content || "",
-          image: assets[`asset_${number}`]?.url
-            ? `http://127.0.0.1:8080/storage/${assets[`asset_${number}`].url}`
-            : "/assets/img/placeholder.png",
-        };
+    // remove o primeiro item (titulo principal da timeline)
+    const eventTexts = orderedTexts.slice(1);
+
+    const events = [];
+
+    for (let i = 0; i < eventTexts.length; i += 2) {
+      const title = eventTexts[i];
+      const description = eventTexts[i + 1];
+
+      const eventNumber = Math.floor(i / 2) + 1;
+
+      events.push({
+        year: title?.content || `Evento ${eventNumber}`,
+        text: description?.content || "",
+        image: assets[`asset_${eventNumber}`]?.url
+          ? `http://127.0.0.1:8080/storage/${assets[`asset_${eventNumber}`].url}`
+          : "/assets/img/placeholder.png",
       });
+    }
 
     return events;
   };
@@ -74,7 +83,11 @@ function OurHistory({ data }) {
 
       requestAnimationFrame(() => {
         const container = containerRef.current;
-        if (!container) return;
+
+        if (!container) {
+          ticking.current = false;
+          return;
+        }
 
         const rect = container.getBoundingClientRect();
         const windowHeight = window.innerHeight;
@@ -115,6 +128,7 @@ function OurHistory({ data }) {
     };
 
     window.addEventListener("scroll", handleScroll);
+
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
@@ -122,6 +136,7 @@ function OurHistory({ data }) {
 
   const handleToggle = () => {
     setIsToggling(true);
+
     setShowAll((prev) => !prev);
 
     setTimeout(() => {
@@ -131,12 +146,13 @@ function OurHistory({ data }) {
 
   return (
     <div className="w-full bg-[#F5F5F5] py-10 px-4 sm:px-8 lg:px-[150px]">
+      {/* TITULO PRINCIPAL */}
       <h2
         className="text-2xl font-bold mb-10 sm:mb-12 ml-0 sm:ml-10"
         dangerouslySetInnerHTML={{
           __html:
-            data?.components?.timeline?.texts?.title?.content ||
-            "Nossa História",
+            Object.values(data?.components?.timeline?.texts || {})?.[0]
+              ?.content || "Nossa História",
         }}
       />
 
@@ -199,9 +215,10 @@ function OurHistory({ data }) {
                     : "opacity-0 translate-y-6"
                 }`}
               >
-                <h3 className="font-bold mb-2 text-[#383838] text-lg">
-                  {item.year}
-                </h3>
+               <div
+                  className="font-bold mb-2 text-[#383838] text-lg"
+                  dangerouslySetInnerHTML={{ __html: item.year }}
+                />
 
                 <div
                   className="text-sm sm:text-base text-gray-700"
