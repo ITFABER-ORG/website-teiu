@@ -16,10 +16,12 @@ function clamp01(t) {
 export default function ProductDetail() {
   const { id } = useParams();
   const location = useLocation();
-    const API_URL = "http://127.0.0.1:8080";
-  
+
+  const API_URL = "http://localhost:8080";
 
   const [product, setProduct] = useState(null);
+  const [activeVariantId, setActiveVariantId] =
+    useState(null);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -28,23 +30,21 @@ export default function ProductDetail() {
           `http://localhost:8000/api/products/${id}`
         );
 
-        const data = await response.json();
-
-        console.log(data);
+        const data =
+          await response.json();
 
         setProduct(data);
       } catch (error) {
-        console.error("Erro ao buscar produto:", error);
+        console.error(
+          "Erro ao buscar produto:",
+          error
+        );
       }
     }
 
     fetchProduct();
   }, [id]);
 
-  const [activeVariantId, setActiveVariantId] = useState(null);
- 
-
-  // define variante inicial quando produto carregar
   useEffect(() => {
     if (product) {
       setActiveVariantId(
@@ -55,11 +55,21 @@ export default function ProductDetail() {
     }
   }, [product, location.state]);
 
-  const progressMV = useMotionValue(0);
-  const progressRef = useRef(0);
+  const progressMV =
+    useMotionValue(0);
 
-  const [isAnimationDone, setIsAnimationDone] = useState(false);
-  const [isReversing, setIsReversing] = useState(false);
+  const progressRef =
+    useRef(0);
+
+  const [
+    isAnimationDone,
+    setIsAnimationDone,
+  ] = useState(false);
+
+  const [
+    isReversing,
+    setIsReversing,
+  ] = useState(false);
 
   useEffect(() => {
     window.scrollTo({
@@ -69,278 +79,688 @@ export default function ProductDetail() {
   }, [id]);
 
   useEffect(() => {
-    if (!isAnimationDone || isReversing) {
-      document.body.style.overflow = "hidden";
+    if (
+      !isAnimationDone ||
+      isReversing
+    ) {
+      document.body.style.overflow =
+        "hidden";
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow =
+        "auto";
     }
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow =
+        "";
     };
-  }, [isAnimationDone, isReversing]);
+  }, [
+    isAnimationDone,
+    isReversing,
+  ]);
 
   useEffect(() => {
     progressRef.current = 0;
+
     progressMV.set(0);
+
     setIsAnimationDone(false);
+
     setIsReversing(false);
   }, [id]);
 
   useEffect(() => {
-    const onScroll = () => {
-      if (window.scrollY === 0 && isAnimationDone) {
+    const onWheelReverse = (
+      e
+    ) => {
+      if (
+        isAnimationDone &&
+        e.deltaY < 0 &&
+        window.scrollY <= 10
+      ) {
+        e.preventDefault();
+
         setIsReversing(true);
+
         setIsAnimationDone(false);
       }
     };
 
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener(
+      "wheel",
+      onWheelReverse,
+      { passive: false }
+    );
 
-    return () => window.removeEventListener("scroll", onScroll);
+    return () =>
+      window.removeEventListener(
+        "wheel",
+        onWheelReverse
+      );
   }, [isAnimationDone]);
 
   useEffect(() => {
     const SPEED = 0.0012;
 
     const onWheel = (e) => {
-      if (!isAnimationDone || isReversing) {
+      if (
+        !isAnimationDone ||
+        isReversing
+      ) {
         e.preventDefault();
 
-        const direction = e.deltaY > 0 ? 1 : -1;
+        const direction =
+          e.deltaY > 0
+            ? 1
+            : -1;
 
         let next =
           progressRef.current +
-          direction * Math.abs(e.deltaY) * SPEED;
+          direction *
+            Math.abs(
+              e.deltaY
+            ) *
+            SPEED;
 
-        next = clamp01(next);
+        next =
+          clamp01(next);
 
-        progressRef.current = next;
+        progressRef.current =
+          next;
 
-        animate(progressMV, next, {
-          duration: 0.5,
-          ease: [0.25, 0.1, 0.25, 1],
-        });
+        animate(
+          progressMV,
+          next,
+          {
+            duration: 0.5,
+            ease: [
+              0.25,
+              0.1,
+              0.25,
+              1,
+            ],
+          }
+        );
 
-        if (next >= 0.99 && !isReversing) {
-          setIsAnimationDone(true);
+        if (
+          next >= 0.99 &&
+          !isReversing
+        ) {
+          setIsAnimationDone(
+            true
+          );
         }
 
-        if (next <= 0.01 && isReversing) {
-          setIsReversing(false);
+        if (
+          next <= 0.01 &&
+          isReversing
+        ) {
+          setIsReversing(
+            false
+          );
         }
       }
     };
 
-    window.addEventListener("wheel", onWheel, {
-      passive: false,
-    });
+    window.addEventListener(
+      "wheel",
+      onWheel,
+      {
+        passive: false,
+      }
+    );
 
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-    };
-  }, [isAnimationDone, isReversing, progressMV]);
-
-  // animações
-  const scaleImg = useTransform(
+    return () =>
+      window.removeEventListener(
+        "wheel",
+        onWheel
+      );
+  }, [
+    isAnimationDone,
+    isReversing,
     progressMV,
-    [0, 0.2, 0.42, 1],
-    [1.25, 1, 0.5, 0.7]
-  );
+  ]);
 
-  const xImg = useTransform(
-    progressMV,
-    [0.28, 0.2],
-    ["20vw", "-25vw"]
-  );
+  const scaleImg =
+    useTransform(
+      progressMV,
+      [0, 0.2, 0.42, 1],
+      [1.25, 1, 0.5, 1]
+    );
 
-  const yImg = useTransform(
-    progressMV,
-    [0, 0.3, 1],
-    [150, 80, 80]
-  );
+  const xImg =
+    useTransform(
+      progressMV,
+      [0.28, 0.2],
+      ["20vw", "-25vw"]
+    );
 
-  const opacityHeroText = useTransform(
-    progressMV,
-    [0, 0.28],
-    [1, 0]
-  );
+  const yImg =
+    useTransform(
+      progressMV,
+      [0, 0.3, 1],
+      [150, 80, 80]
+    );
 
-  const yHeroText = useTransform(
-    progressMV,
-    [0, 0.28],
-    [0, -20]
-  );
+  const opacityHeroText =
+    useTransform(
+      progressMV,
+      [0, 0.28],
+      [1, 0]
+    );
 
-  const opacityUsage = useTransform(
-    progressMV,
-    [0.38, 0.6, 0.9, 0.92],
-    [0, 1, 1, 1]
-  );
+  const yHeroText =
+    useTransform(
+      progressMV,
+      [0, 0.28],
+      [0, -20]
+    );
 
-  const opacityScrollHint = useTransform(
-    progressMV,
-    [0, 0.08],
-    [1, 0]
-  );
+  const opacityDescription =
+    useTransform(
+      progressMV,
+      [
+        0.30,
+        0.40,
+        0.55,
+        0.60,
+      ],
+      [0, 1, 1, 0]
+    );
 
-  // loading
-  if (!product) {
+  const opacityUsage =
+    useTransform(
+      progressMV,
+      [
+        0.55,
+        0.65,
+        0.80,
+        0.85,
+      ],
+      [0, 1, 1, 0]
+    );
+
+  const opacityDetails =
+    useTransform(
+      progressMV,
+      [0.80, 0.90, 1],
+      [0, 1, 1]
+    );
+
+  if (!product)
     return (
       <div className="w-screen h-screen flex items-center justify-center">
         Carregando...
       </div>
     );
-  }
 
   const activeVariant =
-    product.variants.find(
-      (v) => v.id === activeVariantId
-    ) || product.variants[0];
-
+    product?.variants?.find(
+      (v) =>
+        v.id ===
+        activeVariantId
+    ) ||
+    product?.variants?.[0];
 
   return (
     <>
-      <div className="relative w-screen h-screen overflow-hidden bg-white">
-        <Navbar />
+    
+    <div className="relative w-screen min-h-screen overflow-hidden bg-white">
+      <Navbar />
+      {/*teste */}
+      <div className="md:hidden min-h-screen pb-28">
+      {/* Hero */}
 
-        {/* VARIANTES */}
-        <div className="absolute top-0 right-0 h-full w-34 flex z-30 drop-shadow-xl">
-          {product.variants?.map((variant) => (
+      <div className="relative flex flex-col items-center px-6 pt-24">
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 50,
+            scale: 0.8,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1,
+          }}
+          transition={{
+            duration: 0.8,
+          }}
+        >
+          <motion.img
+            src={`${API_URL}/storage/${activeVariant?.image}`}
+            animate={{
+              y: [0, -10, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
+            className="h-[320px] object-contain"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            delay: .2,
+          }}
+          className="text-center mt-6"
+        >
+          <span className="uppercase text-sm text-teiu-deep-blue">
+            {product.category}
+          </span>
+
+          <h1 className="text-4xl font-extrabold text-teiu-deep-blue mt-2">
+            {product.title}
+          </h1>
+
+          <p className="text-lg font-semibold mt-3 text-teiu-deep-blue">
+            {product.tagline}
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Conteúdo */}
+
+      <div className="px-5 mt-10 flex flex-col gap-6">
+
+        {/* descrição */}
+
+        <motion.div
+          initial={{
+            opacity:0,
+            y:50
+          }}
+          whileInView={{
+            opacity:1,
+            y:0
+          }}
+          viewport={{
+            once:true
+          }}
+          className="rounded-3xl p-6 shadow-lg bg-white"
+        >
+          <h2 className="text-2xl font-bold text-teiu-deep-blue mb-3">
+            Descrição
+          </h2>
+
+          <p className="opacity-70">
+            {product.description}
+          </p>
+        </motion.div>
+
+        {/* modo uso */}
+
+        <motion.div
+          initial={{
+            opacity:0,
+            y:50
+          }}
+          whileInView={{
+            opacity:1,
+            y:0
+          }}
+          viewport={{
+            once:true
+          }}
+          transition={{
+            delay:.15
+          }}
+          className="rounded-3xl p-6 shadow-lg bg-white"
+        >
+          <h2 className="text-2xl font-bold text-teiu-deep-blue mb-3">
+            Modo de uso
+          </h2>
+
+          <p className="opacity-70">
+            {product.usage}
+          </p>
+        </motion.div>
+
+        {/* specs */}
+
+        <motion.div
+          initial={{
+            opacity:0,
+            y:50
+          }}
+          whileInView={{
+            opacity:1,
+            y:0
+          }}
+          viewport={{
+            once:true
+          }}
+          transition={{
+            delay:.25
+          }}
+          className="rounded-3xl p-6 shadow-lg bg-white"
+        >
+          <h2 className="text-2xl font-bold text-teiu-deep-blue mb-6">
+            Detalhes
+          </h2>
+
+          <div className="flex flex-col gap-6">
+            {product.specs?.map(
+              (item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4"
+                >
+                  <span
+                    className="text-5xl font-black"
+                    style={{
+                      color:
+                        activeVariant?.color,
+                    }}
+                  >
+                    {item.value}
+                  </span>
+
+                  <span className="font-bold uppercase text-sm">
+                    {item.label}
+                  </span>
+                </div>
+              )
+            )}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Variantes */}
+
+      <div className="fixed bottom-0 left-0 w-full h-20 flex z-50 shadow-xl">
+        {product.variants?.map(
+          (variant) => (
             <button
               key={variant.id}
-              onClick={() => setActiveVariantId(variant.id)}
-              className={`h-full flex-1 relative group transition-all duration-500 cursor-pointer
-                shadow-[inset_0_0_25px_rgba(0,0,0,0.25)]
-                ${
-                  activeVariantId === variant.id
-                    ? "flex-[2]"
-                    : "hover:flex-[1.5]"
-                }`}
+              onClick={() =>
+                setActiveVariantId(
+                  variant.id
+                )
+              }
+              className={`flex-1 relative transition-all
+              ${
+                activeVariantId ===
+                variant.id
+                  ? "flex-[1.5]"
+                  : ""
+              }`}
             >
               <div
-                className={`h-full w-full transition-opacity
-                  ${
-                    activeVariantId === variant.id
-                      ? "opacity-100"
-                      : "opacity-75 group-hover:opacity-100"
-                  }`}
+                className="w-full h-full"
                 style={{
-                  backgroundColor: variant.color,
+                  backgroundColor:
+                    variant.color
                 }}
               />
 
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <motion.div
-                  animate={{
-                    opacity:
-                      activeVariantId === variant.id
-                        ? 1
-                        : 0,
-                    x:
-                      activeVariantId === variant.id
-                        ? 0
-                        : 10,
-                  }}
-                  className="mb-3"
-                >
-                  <ChevronRight className="text-white w-6 h-6 animate-bounce" />
-                </motion.div>
-
-                <span className="whitespace-nowrap [writing-mode:vertical-lr] rotate-180 text-white font-semibold uppercase tracking-wider text-sm">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-white text-xs font-semibold">
                   {variant.label}
                 </span>
               </div>
             </button>
-          ))}
+          )
+        )}
+      </div>
+    </div>
+
+      
+      
+      {/* Variantes */}
+      
+
+      <div className="hidden md:block">
+        <div
+          className="
+        absolute
+        bottom-0
+        md:bottom-auto
+        md:top-0
+        right-0
+        w-full
+        md:w-32
+        h-20
+        md:h-full
+        flex
+        flex-row
+        md:flex-col
+        z-30
+        hidden md:block
+        "
+        >
+          {product?.variants?.map(
+            (
+              variant
+            ) => (
+              <button
+                key={
+                  variant.id
+                }
+                onClick={() =>
+                  setActiveVariantId(
+                    variant.id
+                  )
+                }
+                className={`flex-1 relative ${
+                  activeVariantId ===
+                  variant.id
+                    ? "flex-[2]"
+                    : ""
+                }`}
+              >
+                <div
+                  className="w-full h-full"
+                  style={{
+                    backgroundColor:
+                      variant.color,
+                  }}
+                />
+
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <ChevronRight className="w-4 h-4 text-white" />
+
+                  <span
+                    className="
+                text-xs
+                md:text-sm
+                text-white
+                md:[writing-mode:vertical-lr]
+                md:rotate-180
+                "
+                  >
+                    {
+                      variant.label
+                    }
+                  </span>
+                </div>
+              </button>
+            )
+          )}
         </div>
 
-        {/* IMAGEM */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+        {/* Imagem */}
+
+        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
           <motion.img
-            src={`http://localhost:8080/storage/${activeVariant.image}`}
+            src={`${API_URL}/storage/${activeVariant?.image}`}
             style={{
-              scale: scaleImg,
+              scale:
+                scaleImg,
               x: xImg,
               y: yImg,
             }}
-            className="h-[804px]"
+            className="
+            h-[250px]
+            sm:h-[350px]
+            md:h-[500px]
+            lg:h-[700px]
+            xl:h-[800px]
+            object-contain
+            "
           />
         </div>
 
-        {/* HERO */}
+        {/* Hero */}
+
         <motion.div
-          className="absolute right-10 lg:right-32 top-1/2 -translate-y-1/2
-          w-5/12 font-teiu text-teiu-deep-blue z-10 pt-20 pr-4"
+          className="
+          absolute
+          top-[15%]
+          md:top-1/2
+          right-4
+          md:right-10
+          lg:right-32
+          md:-translate-y-1/2
+          w-[90%]
+          md:w-5/12
+          px-4
+          z-10
+          "
           style={{
-            opacity: opacityHeroText,
+            opacity:
+              opacityHeroText,
             y: yHeroText,
           }}
         >
-          <span className="font-medium text-md mb-4 block uppercase tracking-tighter">
-            {product.category}
+          <span className="uppercase text-sm md:text-base text-teiu-deep-blue">
+            {
+              product.category
+            }
           </span>
 
-          <h1 className="text-6xl md:text-8xl font-extrabold mb-4 leading-none">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-extrabold text-teiu-deep-blue">
             {product.title}
           </h1>
 
-          <p className="text-5xl font-bold leading-tight">
+          <p className="text-lg sm:text-2xl md:text-3xl lg:text-5xl font-bold text-teiu-deep-blue">
             {product.tagline}
           </p>
         </motion.div>
 
-        {/* DESCRIÇÃO */}
-        <motion.div
-          className="absolute left-50 lg:left-50 top-1/2 -translate-y-1/2
-          w-5/12 font-teiu text-teiu-deep-blue z-10 pt-20 pr-4"
-          style={{ opacity: opacityUsage }}
-        >
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-            Descrição
-          </h2>
+        {/* Conteúdo */}
 
-          <p className="text-xl leading-relaxed opacity-75">
-            {product.usage}
-          </p>
-        </motion.div>
-      </div>
-
-      {/* MODO DE USO */}
-      <div className="w-screen p-50 font-teiu text-teiu-deep-blue max-w-[50%]">
-        <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-          Modo de uso
-        </h2>
-
-        <p className="text-xl leading-relaxed opacity-75">
-          {product.usage}
-        </p>
-      </div>
-
-      {/* SPECS */}
-      <div className="w-screen p-50 flex flex-col gap-10">
-        {product.specs?.map((item, i) => (
-          <div
-            key={i}
-            className="flex flex-row items-start gap-5"
-          >
-            <span
-              className="text-7xl md:text-8xl font-black leading-[0.8] tracking-tighter"
+        {[
+          {
+            title:
+              "Descrição",
+            text:
+              product.description,
+            opacity:
+              opacityDescription,
+          },
+          {
+            title:
+              "Modo de uso",
+            text:
+              product.usage,
+            opacity:
+              opacityUsage,
+          },
+        ].map(
+          (
+            section,
+            i
+          ) => (
+            <motion.div
+              key={i}
+              className="
+              absolute
+              left-4
+              sm:left-8
+              lg:left-24
+              top-[55%]
+              md:top-1/2
+              md:-translate-y-1/2
+              w-[90%]
+              md:w-5/12
+              z-10
+              "
               style={{
-                color: activeVariant.color,
+                opacity:
+                  section.opacity,
               }}
             >
-              {item.value}
-            </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-teiu-deep-blue">
+                {
+                  section.title
+                }
+              </h2>
 
-            <div className="flex flex-col pt-1">
-              <span className="text-xl md:text-2xl font-bold uppercase leading-[1.1] max-w-[180px] text-teiu-deep-blue text-left">
-                {item.label}
-              </span>
-            </div>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-teiu-deep-blue opacity-75">
+                {
+                  section.text
+                }
+              </p>
+            </motion.div>
+          )
+        )}
+
+        {/* Specs */}
+
+        <motion.div
+          className="
+          absolute
+          left-4
+          sm:left-8
+          lg:left-24
+          top-[55%]
+          md:top-1/2
+          md:-translate-y-1/2
+          w-[90%]
+          md:w-5/12
+          z-10
+          "
+          style={{
+            opacity:
+              opacityDetails,
+          }}
+        >
+          <div className="flex flex-col gap-6">
+            {product?.specs?.map(
+              (
+                item,
+                i
+              ) => (
+                <div
+                  key={
+                    i
+                  }
+                  className="flex gap-3 items-center"
+                >
+                  <span
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black"
+                    style={{
+                      color:
+                        activeVariant?.color,
+                    }}
+                  >
+                    {
+                      item.value
+                    }
+                  </span>
+
+                  <span className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold uppercase text-teiu-deep-blue">
+                    {
+                      item.label
+                    }
+                  </span>
+                </div>
+              )
+            )}
           </div>
-        ))}
-      </div>
+        </motion.div>
+        </div>
+    </div>
     </>
   );
 }
