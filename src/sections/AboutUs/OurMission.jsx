@@ -35,7 +35,23 @@ function OurMission({ data }) {
 
   const getCards = (type) => {
     if (!data?.texts) return [];
-
+  
+    // MAPEAMENTO DOS ICONS
+    const iconMap = {
+      mission: [
+        "icon1",
+        "icon2",
+      ],
+      vision: [
+        "icon3",
+        "icon4",
+      ],
+      values: [
+        "icon5",
+        "icon6",
+      ],
+    };
+  
     return Object.keys(data.texts)
       .filter(
         (key) =>
@@ -44,9 +60,9 @@ function OurMission({ data }) {
           !key.includes("_icon")
       )
       .sort()
-      .map((key) => {
-        const iconKey = `${key}_icon`;
-
+      .map((key, index) => {
+        const iconKey = iconMap[type]?.[index];
+  
         return {
           text: getText(key),
           icon: getAssetUrl(data?.assets?.[iconKey]),
@@ -68,12 +84,16 @@ function OurMission({ data }) {
     );
   };
 
-  // =============================
-  // TAB DATA DINÂMICO
-  // =============================
+  
 
   const current = {
-    title: getText(`${activeTab}_title`),
+    title:
+      activeTab === "mission"
+        ? "Missão"
+        : activeTab === "vision"
+        ? "Visão"
+        : "Valores",
+  
     items: getCards(activeTab),
   };
 
@@ -81,9 +101,7 @@ function OurMission({ data }) {
     image: getHeartImageByTab(displayedTab),
   };
 
-  // =============================
-  // HANDLERS
-  // =============================
+
 
   const handleTabChange = (tab) => {
     if (tab === activeTab) return;

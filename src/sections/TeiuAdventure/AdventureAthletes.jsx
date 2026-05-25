@@ -13,7 +13,7 @@ const getAssetUrl = (path) => {
 function AdventureAthletes({ data }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 🔥 montar atletas dinamicamente
+
   const atletas = [1, 2, 3, 4, 5].map((i) => {
     const name = data?.texts?.[`athlete_${i}_name`]?.content;
     const role = data?.texts?.[`athlete_${i}_role`]?.content;

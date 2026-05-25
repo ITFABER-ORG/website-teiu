@@ -2,15 +2,18 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 function TrabalheConosco() {
     const API_URL = "http://127.0.0.1:8080";
+    const { language, setLanguage, isEnglish } = useLanguage();
+
       const [pageData, setPageData] = useState(' ');
           
             useEffect(() => {
               const fetchPage = async () => {
                 try {
-                  const response = await fetch("http://127.0.0.1:8000/api/pageWebsite/trabalhe-conosco");
+                  const response = await fetch(`http://127.0.0.1:8000/api/pageWebsite/trabalhe-conosco?language=${language}`);
                   const data = await response.json();
                   console.log(' todos conteudos' , data?.components)
                   setPageData(data);
@@ -20,7 +23,10 @@ function TrabalheConosco() {
               };
           
               fetchPage();
-            }, []);
+            }, [language]);
+            useEffect(()=> {
+                console.log('teste', pageData)
+            },[pageData])
     
     return (
         <div className="min-h-screen bg-[#009FE3] flex flex-col font-sans overflow-x-hidden">
@@ -28,7 +34,7 @@ function TrabalheConosco() {
             <section className="relative w-full h-[70vh] md:h-[85vh] min-h-[500px] overflow-hidden bg-white">
                 <div className="absolute inset-0 w-full h-full">
                     <img
-                        src={`${API_URL}/storage/${pageData?.components?.work_with_us?.assets?.banner?.url}`}
+                        src={`${API_URL}/storage/${pageData?.components?.work_with_us?.assets?.banner_home?.url}`}
                         alt="Trabalhe Conosco Teiú"
                         className="w-full h-full object-cover object-[80%_center] md:object-right"
                     />
@@ -79,10 +85,13 @@ function TrabalheConosco() {
                                             <ExternalLink className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" />
                                         </a>
                                     </h3>
-                                    <p className="text-sm lg:text-base leading-relaxed opacity-80">
-                                        Clique no link acima para conferir nossas oportunidades no portal de vagas 
-                                        e venha fazer parte da nossa história.
-                                    </p>
+                                    <p className="text-white text-base lg:text-lg leading-relaxed opacity-90 max-w-xl"
+                                    dangerouslySetInnerHTML={{
+                                        __html:
+                                        pageData?.components?.call_to_work?.texts?.card_description?.content|| "",
+                                    }}
+    
+                                />
                                 </div>
                             </div>
                         </div>
