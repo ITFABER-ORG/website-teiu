@@ -46,20 +46,20 @@ function ExposeItem({ data }) {
     : null;
 
   return (
-    <section
-      ref={ref}
-      className="
-        w-screen
-        min-h-screen
-        flex
-        flex-col
-        items-center
-        justify-start
-        pt-10
-        overflow-hidden
-        text-[#012C57]
-      "
-    >
+<section
+  ref={ref}
+  className="
+    w-screen
+    md:min-h-screen
+    flex
+    flex-col
+    items-center
+    justify-start
+    pt-10
+    overflow-hidden
+    text-[#012C57]
+  "
+>
 
       {/* título */}
       <h1
