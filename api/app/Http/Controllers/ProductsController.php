@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\ProductService;
 use Illuminate\Http\Request;
+use App\Models\Variation;
+
 
 class ProductsController extends Controller
 {
@@ -71,5 +73,14 @@ class ProductsController extends Controller
         return response()->json([
             'message' => 'Produto deletado com sucesso'
         ]);
+    }
+    public function getProductsWithEmphasisVariants()
+    {
+        return Variation::with('product')
+            ->where('emphasis', true)
+            ->whereHas('product', function ($query) {
+                $query->where('status', 'in_production');
+            })
+            ->get();
     }
 }

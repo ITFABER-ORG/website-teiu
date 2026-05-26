@@ -15,7 +15,7 @@ function AdventureHero({ data }) {
   const imageUrl = getAssetUrl(imgPath);
 
   return (
-    <section className="relative w-full min-h-[100vh] flex flex-col items-center justify-center bg-[#003366] overflow-hidden pt-24 pb-12">
+    <section className="relative w-full md:min-h-[100vh]  min-h-[50vh] flex flex-col items-center justify-center bg-[#003366] overflow-hidden pt-24 pb-12">
       
       <div className="absolute inset-0 z-0">
         <img
