@@ -17,7 +17,8 @@ export default function ProductDetail() {
   const { id } = useParams();
   const location = useLocation();
 
-  const API_URL = "http://localhost:8080";
+  const API_URL = import.meta.env.VITE_API_URL;
+
 
   const [product, setProduct] = useState(null);
   const [activeVariantId, setActiveVariantId] =
@@ -27,7 +28,7 @@ export default function ProductDetail() {
     async function fetchProduct() {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/products/${id}`
+          `${API_URL}/api/products/${id}`
         );
 
         const data =
