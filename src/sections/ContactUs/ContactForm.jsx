@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 
 function ContactForm({ data }) {
-  const API_URL = "http://127.0.0.1:8080";
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
   const [dataSection, setDataSection] = useState({
     img: "",
@@ -88,7 +89,7 @@ function ContactForm({ data }) {
     setResponseMsg("");
 
     try {
-      const response = await fetch(`${API_URL}/api/sendEmail`, {
+      const response = await fetch(`${VITE_CMS_URL}/api/sendEmail`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -128,7 +129,7 @@ function ContactForm({ data }) {
         <div className="w-full lg:w-1/2 flex justify-center">
           <div className="w-full max-w-[500px] aspect-[653/687]">
             <img
-              src={`${API_URL}/storage/${dataSection.img}`}
+              src={`${VITE_CMS_URL}/storage/${dataSection.img}`}
               alt={dataSection.title}
               className="w-full h-full object-cover rounded-3xl shadow-md"
             />

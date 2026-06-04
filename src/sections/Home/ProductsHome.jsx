@@ -10,6 +10,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import ProductCardHome from '../../components/products/ProductCardHome';
+const API_URL = import.meta.env.VITE_API_URL;
+const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
 function ProductsSession() {
   const { t } = useTranslation();
@@ -25,7 +28,7 @@ function ProductsSession() {
     async function fetchProducts() {
       try {
         const response = await fetch(
-          'http://127.0.0.1:8000/api/productsEmphasis'
+          `${API_URL}/api/productsEmphasis`
         );
 
         const data = await response.json();
@@ -135,7 +138,7 @@ function ProductsSession() {
               >
                 <ProductCardHome
                   title={`${item.product?.title} ${item?.label}`}
-                  image={`http://127.0.0.1:8080/storage/${item.url_image}`}
+                  image={`${VITE_CMS_URL}/storage/${item.url_image}`}
                   parentId={item.product?.id}
                   variantId={item.id}
                   allVariants={[item]}

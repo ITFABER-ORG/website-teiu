@@ -9,7 +9,8 @@ import { useTranslation } from "react-i18next";
 
 function ProductsPage() {
   const { t } = useTranslation();
-  const API_URL = "http://127.0.0.1:8080";
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -34,7 +35,7 @@ function ProductsPage() {
         setLoading(true);
 
         const response = await fetch(
-          "http://127.0.0.1:8000/api/products"
+          `${API_URL}/api/products`
         );
 
         const data = await response.json();

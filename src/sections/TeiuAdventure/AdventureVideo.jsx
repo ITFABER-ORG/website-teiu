@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState} from 'react';
 function AdventureVideo({data}) {
   const videoRef = useRef(null);
   const [img, setImg] = useState(null);
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
   
   useEffect(()=> {
       console.log('lepo',data?.assets?.banner_video_home?.url)
@@ -31,7 +32,7 @@ function AdventureVideo({data}) {
     <section className="relative w-full h-[60vh] md:h-[100vh] overflow-hidden bg-black flex items-center justify-center">
       <video
         ref={videoRef}
-        src={` http://127.0.0.1:8080/storage/${img}`} 
+        src={`${VITE_CMS_URL}/storage/${img}`} 
         muted
         loop
         playsInline

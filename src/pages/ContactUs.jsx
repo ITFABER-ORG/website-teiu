@@ -7,6 +7,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 
 function ConatctUs() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
     const [pageData, setPageData] = useState(' ');
      const { language, setLanguage, isEnglish } = useLanguage();
    
@@ -15,7 +17,7 @@ function ConatctUs() {
        const fetchPage = async () => {
          try {
            const response = await fetch(
-             `http://127.0.0.1:8000/api/pageWebsite/contato?language=${language}`
+             `${API_URL}/api/pageWebsite/contato?language=${language}`
            );
      
            const data = await response.json();

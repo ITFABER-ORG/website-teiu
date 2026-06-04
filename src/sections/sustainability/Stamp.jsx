@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 function Stamp({ data }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
-
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -29,7 +29,7 @@ function Stamp({ data }) {
 
   const imageUrl =
     data?.assets?.stamp_image?.url
-      ? `http://localhost:8080/storage/${data.assets.stamp_image.url}`
+      ? `${VITE_CMS_URL}/storage/${data.assets.stamp_image.url}`
       : null;
 
   return (

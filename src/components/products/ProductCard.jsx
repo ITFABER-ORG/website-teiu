@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
 
-  const API_URL = "http://127.0.0.1:8080";
+    const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
   const variant = product.selectedVariant;
 
@@ -34,7 +35,7 @@ const ProductCard = ({ product }) => {
         <div className="w-full flex justify-center mb-5 h-[220px] overflow-visible relative z-10">
 
           <img
-            src={`${API_URL}/storage/${variant.image}`}
+            src={`${VITE_CMS_URL}/storage/${variant.image}`}
             alt={product.title}
             className="
               h-full w-auto object-contain

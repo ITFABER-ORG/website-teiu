@@ -4,7 +4,8 @@ function InstitutionalVideo({ data }) {
   const videoRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [img, setImg] = useState('');
-
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+  
   useEffect(() => {
     const options = {
       root: null,
@@ -49,7 +50,7 @@ function InstitutionalVideo({ data }) {
             ref={videoRef}
             src={
               isLoaded && img
-                ? `http://127.0.0.1:8080/storage/${img}`
+                ? `${VITE_CMS_URL}/storage/${img}`
                 : ""
             }
             muted

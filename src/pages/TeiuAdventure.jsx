@@ -12,6 +12,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useEffect, useState } from 'react';
 
 function TeiuAdventure() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [pageData, setPageData] = useState(' ');
   const { language, setLanguage, isEnglish } = useLanguage();
 
@@ -20,7 +22,7 @@ function TeiuAdventure() {
     const fetchPage = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/pageWebsite/teiu-adventure?language=${language}`
+          `${API_URL}/api/pageWebsite/teiu-adventure?language=${language}`
         );
   
         const data = await response.json();

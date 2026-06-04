@@ -4,7 +4,7 @@ function OurMission({ data }) {
   const [activeTab, setActiveTab] = useState("mission");
   const [displayedTab, setDisplayedTab] = useState("mission");
   const [pulse, setPulse] = useState(false);
-
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
   const [visible, setVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
@@ -20,7 +20,7 @@ function OurMission({ data }) {
 
   const getAssetUrl = (asset) => {
     if (!asset?.url) return null;
-    return `http://localhost:8080/storage/${asset.url}`;
+    return `${VITE_CMS_URL}/storage/${asset.url}`;
   };
 
   const getHeartImageByTab = (tab) => {

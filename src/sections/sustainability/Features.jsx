@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 function Features({ data }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
-
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -21,7 +21,7 @@ function Features({ data }) {
 
   const cards = [1, 2, 3].map((card) => ({
     img: data?.assets?.[`card${card}_image`]?.url
-      ? `http://localhost:8080/storage/${data.assets[`card${card}_image`].url}`
+      ? `${VITE_CMS_URL}/storage/${data.assets[`card${card}_image`].url}`
       : null,
 
     title:

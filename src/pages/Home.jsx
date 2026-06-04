@@ -10,15 +10,19 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 
 function Home() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [pageData, setPageData] = useState(' ');
   const { language, setLanguage, isEnglish } = useLanguage();
 
-
+  useEffect(()=> {
+    console.log(`${API_URL}/api/pageWebsite/home?language=${language}`)
+  },[])
   useEffect(() => {
     const fetchPage = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/pageWebsite/home?language=${language}`
+          `${API_URL}/api/pageWebsite/home?language=${language}`
         );
   
         const data = await response.json();

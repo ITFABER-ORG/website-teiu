@@ -29,7 +29,7 @@ class ContactService
 
             Mail::send([], [], function ($message) use ($data, $formattedPhone) {
 
-                $logo = $message->embed(public_path('Logomarca.png')); // <- sua imagem
+                $logo = $message->embed(public_path('Logomarca.png')); 
 
                 $message->to($data['email'])
                         ->replyTo($data['email'], $data['name'])

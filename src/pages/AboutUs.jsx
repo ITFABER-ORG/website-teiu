@@ -12,6 +12,8 @@ import Footer from "../components/Footer.jsx";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
 
 function AboutUs() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [pageData, setPageData] = useState(' ');
       const { language, setLanguage, isEnglish } = useLanguage();
     
@@ -20,7 +22,7 @@ function AboutUs() {
         const fetchPage = async () => {
           try {
             const response = await fetch(
-              `http://127.0.0.1:8000/api/pageWebsite/empresa?language=${language}`
+              `${API_URL}/api/pageWebsite/empresa?language=${language}`
             );
       
             const data = await response.json();

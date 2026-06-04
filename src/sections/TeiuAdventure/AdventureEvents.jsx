@@ -6,13 +6,14 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-const API_URL = "http://127.0.0.1:8080";
+const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
 const getAssetUrl = (path) => {
   if (!path) return "/img/icon.svg";
   if (path.startsWith("http")) return path;
 
-  return `${API_URL}/storage/${path}`;
+  return `${VITE_CMS_URL}/storage/${path}`;
 };
 
 function AdventureEvents({ data }) {

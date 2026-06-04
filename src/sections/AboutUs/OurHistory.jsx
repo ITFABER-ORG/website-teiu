@@ -11,6 +11,8 @@ function OurHistory({ data }) {
   const itemRefs = useRef([]);
   const containerRef = useRef(null);
   const ticking = useRef(false);
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
   const buildTimeline = () => {
     const timelineData = data?.components?.timeline;
@@ -38,7 +40,7 @@ function OurHistory({ data }) {
         year: title?.content || `Evento ${eventNumber}`,
         text: description?.content || "",
         image: assets[`asset_${eventNumber}`]?.url
-          ? `http://127.0.0.1:8080/storage/${assets[`asset_${eventNumber}`].url}`
+          ? `${VITE_CMS_URL}/storage/${assets[`asset_${eventNumber}`].url}`
           : "/assets/img/placeholder.png",
       });
     }

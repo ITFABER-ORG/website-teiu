@@ -5,7 +5,7 @@ const RodaSustentabilidade = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
-
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
   const items = [1, 2, 3, 4].map((item) => ({
     id: item,
 
@@ -17,7 +17,7 @@ const RodaSustentabilidade = ({ data }) => {
 
     image:
       data?.assets?.[`roulette_img_${item}`]?.url
-        ? `http://localhost:8080/storage/${
+        ? `${VITE_CMS_URL}/storage/${
             data.assets[`roulette_img_${item}`].url
           }`
         : null

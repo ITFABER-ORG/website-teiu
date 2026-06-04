@@ -4,7 +4,7 @@ function ExposeItem({ data }) {
   const [offset, setOffset] = useState(0);
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
-
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
   useEffect(() => {
     const handleScroll = () => {
       if (!ref.current) return;
@@ -42,7 +42,7 @@ function ExposeItem({ data }) {
     data?.assets?.sustainability_image;
 
   const imageUrl = image?.url
-    ? `http://localhost:8080/storage/${image.url}`
+    ? `${VITE_CMS_URL}/storage/${image.url}`
     : null;
 
   return (

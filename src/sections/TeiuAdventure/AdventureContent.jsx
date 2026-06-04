@@ -4,11 +4,9 @@ function AdventureContent({ data, mediaFiles }) {
 
   const texts = data?.texts || {};
   const assets = data?.assets || {};
-
-  // 🔥 pegar texto direto
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
   const getText = (key) => texts?.[key]?.content || "";
 
-  // 🔥 pegar imagem (com suporte a preview local)
   const getAssetUrl = (key) => {
     const asset = assets?.[key];
 
@@ -16,7 +14,7 @@ function AdventureContent({ data, mediaFiles }) {
     if (localFile) return URL.createObjectURL(localFile);
 
     if (asset?.url) {
-      return `http://localhost:8080/storage/${asset.url}`;
+      return `${VITE_CMS_URL}/storage/${asset.url}`;
     }
 
     return null;

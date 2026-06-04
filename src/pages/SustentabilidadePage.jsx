@@ -7,13 +7,16 @@ import Stamp from '../sections/sustainability/Stamp';
 import Features from '../sections/sustainability/Features';
 
 const SustentabilidadePage = () => {
-  const API_URL = "http://127.0.0.1:8080";
+  const API_URL = import.meta.env.VITE_API_URL;
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
+
         const [pageData, setPageData] = useState(' ');
             
               useEffect(() => {
                 const fetchPage = async () => {
                   try {
-                    const response = await fetch("http://127.0.0.1:8000/api/pageWebsite/sustentabilidade");
+                    const response = await fetch(`${API_URL}/api/pageWebsite/sustentabilidade`);
                     const data = await response.json();
                     console.log(' todos conteudos' , data?.components)
                     setPageData(data);
@@ -32,7 +35,7 @@ const SustentabilidadePage = () => {
       <div className="relative w-full h-[80vh] md:h-[100vh] flex flex-col items-center justify-center text-center"> 
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img 
-            src={`${API_URL}/storage/${pageData?.components?.banner_sustainability?.assets?.banner_sustainability?.url}`} 
+            src={`${VITE_CMS_URL}/storage/${pageData?.components?.banner_sustainability?.assets?.banner?.url}`} 
             alt="Natureza e Sustentabilidade" 
             className="w-full h-full object-cover"
           />

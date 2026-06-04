@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 function SocialProof({ data }) {
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
   const [visible, setVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const ref = useRef(null);
@@ -74,7 +76,7 @@ function SocialProof({ data }) {
               <div className="absolute -top-5 bg-white rounded-full p-3 shadow-md border border-white/30">
                 {card.icon && (
                   <img
-                    src={`http://127.0.0.1:8080/storage/${card.icon}`}
+                    src={`${VITE_CMS_URL}/storage/${card.icon}`}
                     alt={card.title}
                     className="w-8 h-8 md:w-9 md:h-9 object-contain"
                   />

@@ -2,7 +2,8 @@ import CardContact from "../../components/CardContact";
 import Navbar from "../../components/Navbar";
 
 function BannerContactSession({ data }) {
-  const API_URL = "http://127.0.0.1:8080";
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
   const assets = data?.assets || {};
   const texts = data?.texts || {};
@@ -12,7 +13,7 @@ function BannerContactSession({ data }) {
 
     if (!asset?.url) return null;
 
-    return `${API_URL}/storage/${asset.url}`;
+    return `${VITE_CMS_URL}/storage/${asset.url}`;
   };
 
   const getText = (key) => {

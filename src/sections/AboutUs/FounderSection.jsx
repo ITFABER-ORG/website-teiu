@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 function FounderSection({data}) {
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
   const [progress, setProgress] = useState(0);
   const ref = useRef(null);
-   const [founder , setFounder] = useState(' ');
+  const [founder , setFounder] = useState(' ');
    
     useEffect(()=>{
       console.log('founder',data?.components?.foundation)
@@ -53,7 +55,7 @@ function FounderSection({data}) {
         {/* IMAGEM */}
         <div className="w-full overflow-hidden transition-all duration-500">
           <img
-            src={`http://127.0.0.1:8080/storage/${founder?.assets?.hero_banner?.url}`}
+            src={`${VITE_CMS_URL}/storage/${founder?.assets?.hero_banner?.url}`}
             alt="Fundador"
             className="w-full h-[250px] sm:h-[350px] md:h-[450px] object-contain rounded-xl shadow-lg"
           />

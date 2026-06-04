@@ -1,22 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const API_URL = "http://127.0.0.1:8080";
+const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
 const getAssetUrl = (path) => {
   if (!path) return "/img/icon.svg";
   if (path.startsWith("http")) return path;
 
-  return `${API_URL}/storage/${path}`;
+  return `${VITE_CMS_URL}/storage/${path}`;
 };
 
 function AdventureAthletes({ data }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const stripHtml = (html) => {
+    if (!html) return "";
+    return html.replace(/<[^>]*>/g, "").trim();
+  };
 
   const atletas = [1, 2, 3, 4, 5].map((i) => {
-    const name = data?.texts?.[`athlete_${i}_name`]?.content;
-    const role = data?.texts?.[`athlete_${i}_role`]?.content;
+    const name = stripHtml(
+      data?.texts?.[`athlete_${i}_name`]?.content
+    );
+
+    const role = stripHtml(
+      data?.texts?.[`athlete_${i}_role`]?.content
+    );
+
     const asset = data?.assets?.[`asset_${i}`];
 
     return {
@@ -53,7 +64,7 @@ function AdventureAthletes({ data }) {
   return (
     <section className="w-full pt-16 pb-12 px-6 lg:px-20 container mx-auto max-w-[1400px]">
       <h2 className="text-white text-3xl md:text-4xl font-bold mb-8">
-        {data?.texts?.title?.content || "Nossos Atletas"}
+        {stripHtml(data?.texts?.title?.content) || "Nossos Atletas"}
       </h2>
 
       <AnimatePresence mode="wait">
@@ -86,6 +97,7 @@ function AdventureAthletes({ data }) {
                   <h3 className="text-3xl lg:text-4xl font-bold leading-none tracking-tight mb-1 w-2/3">
                     {atleta.nome}
                   </h3>
+
                   <p className="text-sm font-medium opacity-90 leading-tight w-2/3">
                     {atleta.texto}
                   </p>
