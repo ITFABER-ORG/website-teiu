@@ -59,12 +59,7 @@ function BannerContactSession({ data }) {
             action="email"
           />
 
-          <CardContact
-            icon={getAssetUrl("whatsapp_icon")}
-            title={getText("whatsapp_title")}
-            description={getText("whatsapp_value")}
-            action="whatsapp"
-          />
+     
 
           <CardContact
             icon={getAssetUrl("social_icon")}
