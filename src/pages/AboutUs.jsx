@@ -44,8 +44,7 @@ function AboutUs() {
     <>
         <Navbar/>
         <BannerMaster
-        title={'Lorem Impsum Dolor'}
-        text={' Lorem ipsum dolor sit, amet consectetur adipisicing elit.  At repellendus beatae distinctio suscipit esse, eveniet, animi laboriosam dolorum, sit repudiandae obcaecati accusamus rerum soluta nam perspiciatis quas voluptatem. Tempora, veniam!'}
+          data={pageData?.components?.banner_empresa}
         />
         <OurFacilities data={pageData}/>
         <OurHistory data={pageData}/>
