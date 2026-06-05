@@ -4,13 +4,14 @@ function Stamp({ data }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setVisible(entry.isIntersecting);
       },
       {
-        threshold: 0.2
+        threshold: 0.2,
       }
     );
 
@@ -21,16 +22,14 @@ function Stamp({ data }) {
     return () => observer.disconnect();
   }, []);
 
-  const title =
-    data?.texts?.stamp_title?.content || "";
+  const title = data?.texts?.stamp_title?.content || "";
 
   const description =
     data?.texts?.stamp_description?.content || "";
 
-  const imageUrl =
-    data?.assets?.stamp_image?.url
-      ? `${VITE_CMS_URL}/storage/${data.assets.stamp_image.url}`
-      : null;
+  const imageUrl = data?.assets?.stamp_image?.url
+    ? `${VITE_CMS_URL}/storage/${data.assets.stamp_image.url}`
+    : null;
 
   return (
     <section
@@ -38,7 +37,6 @@ function Stamp({ data }) {
       className="w-screen py-16 px-6 md:px-20"
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
-
         {/* Imagem */}
         <div
           className={`
@@ -60,7 +58,7 @@ function Stamp({ data }) {
           {imageUrl ? (
             <img
               src={imageUrl}
-              alt={title}
+              alt="Stamp"
               className="
                 w-full
                 max-w-md
@@ -90,18 +88,40 @@ function Stamp({ data }) {
             }
           `}
           style={{
-            transitionDelay: "200ms"
+            transitionDelay: "200ms",
           }}
         >
-          <h3 className="text-lg md:text-xl mb-4 font-semibold">
-            {title}
-          </h3>
+          <div
+            className="
+              text-lg
+              md:text-xl
+              mb-4
+              font-semibold
+              [&_p]:m-0
+            "
+            dangerouslySetInnerHTML={{
+              __html: title,
+            }}
+          />
 
-          <p className="text-sm md:text-base leading-relaxed">
-            {description}
-          </p>
+          <div
+            className="
+              text-sm
+              md:text-base
+              leading-relaxed
+              [&_p]:mb-3
+              [&_p:last-child]:mb-0
+              [&_ul]:list-disc
+              [&_ul]:pl-5
+              [&_ol]:list-decimal
+              [&_ol]:pl-5
+              [&_strong]:font-bold
+            "
+            dangerouslySetInnerHTML={{
+              __html: description,
+            }}
+          />
         </div>
-
       </div>
     </section>
   );

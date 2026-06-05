@@ -63,62 +63,62 @@ function ExposeItem({ data }) {
 
       {/* título */}
       <h1
-        className={`
-          text-4xl
-          md:text-6xl
-          font-bold
-          text-center
-          transition-all
-          duration-1000
-          ${
-            visible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
-          }
-        `}
-        dangerouslySetInnerHTML={{
-          __html: title
-        }}
-      />
+  className={`
+    text-4xl
+    md:text-6xl
+    font-bold
+    text-center
+    transition-all
+    duration-1000
+    ${
+      visible
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 translate-y-10"
+    }
+  `}
+  dangerouslySetInnerHTML={{
+    __html: title,
+  }}
+/>
 
-      {/* subtítulo 1 */}
-      <p
-        className={`
-          mt-3
-          text-center
-          text-lg
-          md:text-2xl
-          transition-all
-          duration-1000
-          delay-200
-          ${
-            visible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
-          }
-        `}
-      >
-        {subtitle1}
-      </p>
+<p
+  className={`
+    mt-3
+    text-center
+    text-lg
+    md:text-2xl
+    transition-all
+    duration-1000
+    delay-200
+    ${
+      visible
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 translate-y-10"
+    }
+  `}
+  dangerouslySetInnerHTML={{
+    __html: subtitle1,
+  }}
+/>
 
-      {/* subtítulo 2 */}
-      <p
-        className={`
-          text-center
-          text-lg
-          md:text-2xl
-          transition-all
-          duration-1000
-          delay-300
-          ${
-            visible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
-          }
-        `}
-      >
-        {subtitle2}
-      </p>
+<p
+  className={`
+    text-center
+    text-lg
+    md:text-2xl
+    transition-all
+    duration-1000
+    delay-300
+    ${
+      visible
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 translate-y-10"
+    }
+  `}
+  dangerouslySetInnerHTML={{
+    __html: subtitle2,
+  }}
+/>
 
       {/* imagem */}
       <div className="w-screen overflow-hidden mt-10 flex justify-center">

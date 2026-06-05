@@ -4,6 +4,7 @@ function Features({ data }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -24,11 +25,9 @@ function Features({ data }) {
       ? `${VITE_CMS_URL}/storage/${data.assets[`card${card}_image`].url}`
       : null,
 
-    title:
-      data?.texts?.[`card${card}_title`]?.content || "",
+    title: data?.texts?.[`card${card}_title`]?.content || "",
 
-    desc:
-      data?.texts?.[`card${card}_description`]?.content || "",
+    desc: data?.texts?.[`card${card}_description`]?.content || "",
   }));
 
   return (
@@ -37,7 +36,6 @@ function Features({ data }) {
       className="w-screen py-30 px-6 md:px-20"
     >
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-
         {cards.map((card, index) => (
           <div
             key={index}
@@ -59,14 +57,12 @@ function Features({ data }) {
               transitionDelay: `${index * 150}ms`,
             }}
           >
-
             {/* Imagem */}
             <div className="w-full h-64 overflow-hidden">
-
               {card.img ? (
                 <img
                   src={card.img}
-                  alt={card.title}
+                  alt="Feature"
                   className="
                     w-full
                     h-full
@@ -81,25 +77,43 @@ function Features({ data }) {
                   Sem imagem
                 </div>
               )}
-
             </div>
 
             {/* Conteúdo */}
             <div className="p-5 text-[#012C57]">
+              <div
+                className="
+                  font-bold
+                  text-sm
+                  md:text-base
+                  mb-2
+                  [&_p]:m-0
+                "
+                dangerouslySetInnerHTML={{
+                  __html: card.title,
+                }}
+              />
 
-              <h3 className="font-bold text-sm md:text-base mb-2">
-                {card.title}
-              </h3>
-
-              <p className="text-xs md:text-sm opacity-80 leading-relaxed">
-                {card.desc}
-              </p>
-
+              <div
+                className="
+                  text-xs
+                  md:text-sm
+                  opacity-80
+                  leading-relaxed
+                  [&_p]:mb-2
+                  [&_p:last-child]:mb-0
+                  [&_ul]:list-disc
+                  [&_ul]:pl-5
+                  [&_ol]:list-decimal
+                  [&_ol]:pl-5
+                "
+                dangerouslySetInnerHTML={{
+                  __html: card.desc,
+                }}
+              />
             </div>
-
           </div>
         ))}
-
       </div>
     </section>
   );

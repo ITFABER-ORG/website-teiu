@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 
-function OurFacilities({data}) {
-  const [facilities, setFacilities] = useState('');
+function OurFacilities({ data }) {
+  const [facilities, setFacilities] = useState(null);
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
   const sectionRef = useRef(null);
-  useEffect(()=> {
-    setFacilities(data?.components?.our_dependencies?.texts)
-  },[data])
+
+  useEffect(() => {
+    if (data?.components?.our_dependencies) {
+      setFacilities(data.components.our_dependencies);
+    }
+  }, [data]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -34,14 +37,9 @@ function OurFacilities({data}) {
 
       const rect = sectionRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-
       const exitStart = windowHeight * 0.75;
 
-      if (rect.top > exitStart) {
-        setIsLeaving(true);
-      } else {
-        setIsLeaving(false);
-      }
+      setIsLeaving(rect.top > exitStart);
     };
 
     const onScroll = () => requestAnimationFrame(handleScroll);
@@ -52,30 +50,36 @@ function OurFacilities({data}) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const imageUrl = facilities?.assets?.thumbnail?.url
+    ? `https://cms.teiu.com.br/public/storage/${facilities.assets.thumbnail.url}`
+    : "/assets/img/facilities.jpg";
+
   return (
     <section
       ref={sectionRef}
       className="w-full py-24 px-4 sm:px-8 lg:px-[150px] bg-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-around items-center gap-10">
-        
         {/* TEXTO */}
         <div
           className={`w-full max-w-[400px] transition-all duration-1000 ${
             visible && !isLeaving
               ? "opacity-100 translate-x-0"
-              : isLeaving
-              ? "opacity-0 -translate-x-20"
               : "opacity-0 -translate-x-20"
           }`}
         >
-         <h2
+          <div
             className="text-2xl sm:text-3xl font-bold text-teiu-primary-dark mb-4 leading-tight"
-            dangerouslySetInnerHTML={{ __html: facilities?.title?.content }}
+            dangerouslySetInnerHTML={{
+              __html: facilities?.texts?.title?.content || "",
+            }}
           />
 
-          <p className="text-sm sm:text-base text-gray-600 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: facilities?.subtitle?.content }}
+          <div
+            className="text-sm sm:text-base text-gray-600 leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html: facilities?.texts?.description?.content || "",
+            }}
           />
         </div>
 
@@ -85,14 +89,12 @@ function OurFacilities({data}) {
           className={`w-full lg:w-1/2 relative group cursor-pointer transition-all duration-1000 delay-200 ${
             visible && !isLeaving
               ? "opacity-100 translate-x-0"
-              : isLeaving
-              ? "opacity-0 translate-x-20"
               : "opacity-0 translate-x-20"
           }`}
         >
           <div className="rounded-lg overflow-hidden shadow-lg">
             <img
-              src="/assets/img/facilities.jpg"
+              src={imageUrl}
               alt="Facilities"
               className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
             />
@@ -131,12 +133,12 @@ function OurFacilities({data}) {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-[90%] max-w-3xl aspect-video bg-black rounded-lg shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-in-out]"
+            className="w-[90%] max-w-3xl aspect-video bg-black rounded-lg shadow-2xl overflow-hidden"
           >
             <iframe
               className="w-full h-full"
-              src={facilities?.link?.content}
-              title="YouTube video"
+              src={facilities?.texts?.link?.content || ""}
+              title="Video"
               frameBorder="0"
               allow="autoplay; encrypted-media"
               allowFullScreen

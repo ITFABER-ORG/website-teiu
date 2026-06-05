@@ -17,7 +17,7 @@ export default function ProductDetail() {
   const { id } = useParams();
   const location = useLocation();
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_CMS_URL;
 
 
   const [product, setProduct] = useState(null);

@@ -192,40 +192,48 @@ function ContactForm({ data }) {
               required
             />
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-3 flex items-center justify-between bg-[#E0F896] px-6 py-3 rounded-full font-medium text-gray-900 shadow-sm disabled:opacity-50"
-            >
-              {loading ? "Enviando..." : dataSection.buttonText}
+<button
+  type="submit"
+  disabled={loading}
+  className="mt-3 flex items-center justify-between bg-[#E0F896] px-6 py-3 rounded-full font-medium text-gray-900 shadow-sm disabled:opacity-50"
+>
+  {loading ? (
+    "Enviando..."
+  ) : (
+    <span
+      className="[&_p]:m-0"
+      dangerouslySetInnerHTML={{
+        __html: dataSection.buttonText,
+      }}
+    />
+  )}
 
-              <span className="relative bg-white rounded-full w-8 h-8 flex items-center justify-center shadow overflow-hidden">
+  <span className="relative bg-white rounded-full w-8 h-8 flex items-center justify-center shadow overflow-hidden">
+    {loading && (
+      <div
+        className="absolute bottom-0 left-0 w-full overflow-hidden"
+        style={{ height: `${progress}%` }}
+      >
+        <div className="absolute inset-0 bg-green-400" />
 
-                {loading && (
-                  <div
-                    className="absolute bottom-0 left-0 w-full overflow-hidden"
-                    style={{ height: `${progress}%` }}
-                  >
-                    <div className="absolute inset-0 bg-green-400" />
+        <div
+          className="absolute w-[200%] h-[120%] bg-green-500/70 rounded-[40%]"
+          style={{
+            top: "-10%",
+            left: "-50%",
+            animation: "wave 2s linear infinite",
+          }}
+        />
+      </div>
+    )}
 
-                    <div
-                      className="absolute w-[200%] h-[120%] bg-green-500/70 rounded-[40%]"
-                      style={{
-                        top: "-10%",
-                        left: "-50%",
-                        animation: "wave 2s linear infinite",
-                      }}
-                    />
-                  </div>
-                )}
-
-                <img
-                  src="/assets/img/arrow.svg"
-                  alt="Arrow"
-                  className="relative z-10"
-                />
-              </span>
-            </button>
+    <img
+      src="/assets/img/arrow.svg"
+      alt="Arrow"
+      className="relative z-10"
+    />
+  </span>
+</button>
 
             {responseMsg && (
               <div className="mt-4 p-3 rounded-lg bg-white border shadow text-sm">

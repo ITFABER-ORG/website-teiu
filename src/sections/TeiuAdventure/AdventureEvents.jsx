@@ -32,9 +32,19 @@ function AdventureEvents({ data }) {
 
   return (
     <section className="w-full pb-24 px-6 lg:px-20 container mx-auto max-w-[1400px]">
-      <h2 className="text-white text-3xl md:text-4xl font-bold mb-8">
-        {data?.texts?.title?.content || "Eventos"}
-      </h2>
+      <div
+        className="
+          text-white
+          text-3xl
+          md:text-4xl
+          font-bold
+          mb-8
+          [&_p]:m-0
+        "
+        dangerouslySetInnerHTML={{
+          __html: data?.texts?.title?.content || "Eventos",
+        }}
+      />
 
       <div className="relative group">
         <Swiper

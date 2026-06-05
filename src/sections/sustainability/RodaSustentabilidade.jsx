@@ -123,14 +123,38 @@ const RodaSustentabilidade = ({ data }) => {
             {/* Header */}
             <div className="text-center px-6 mb-10 md:mb-16">
 
-              <h2 className="text-3xl md:text-4xl text-[#003366] font-extrabold mb-4">
-                {title}
-              </h2>
+            <div
+              className="
+                text-3xl
+                md:text-4xl
+                text-[#003366]
+                font-extrabold
+                mb-4
+                [&_p]:m-0
+              "
+              dangerouslySetInnerHTML={{
+                __html: title,
+              }}
+            />
 
-              <p className="text-base md:text-lg text-gray-700 max-w-2xl mx-auto">
-                {description}
-              </p>
-
+            <div
+              className="
+                text-base
+                md:text-lg
+                text-gray-700
+                max-w-2xl
+                mx-auto
+                [&_p]:mb-3
+                [&_p:last-child]:mb-0
+                [&_ul]:list-disc
+                [&_ul]:pl-5
+                [&_ol]:list-decimal
+                [&_ol]:pl-5
+              "
+              dangerouslySetInnerHTML={{
+                __html: description,
+              }}
+            />
             </div>
 
             <div className="w-full flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 px-6">
@@ -245,19 +269,36 @@ const RodaSustentabilidade = ({ data }) => {
                         }}
                       >
 
-                        <h3
-                          className="text-3xl font-bold mb-4"
-                          style={{
-                            color: "#076033"
-                          }}
-                        >
-                          {item.title}
-                        </h3>
+<div
+  className="
+    text-3xl
+    font-bold
+    mb-4
+    [&_p]:m-0
+  "
+  style={{
+    color: "#076033",
+  }}
+  dangerouslySetInnerHTML={{
+    __html: item.title,
+  }}
+/>
 
-                        <p className="text-gray-600">
-                          {item.description}
-                        </p>
-
+        <div
+          className="
+            text-gray-600
+            [&_p]:mb-3
+            [&_p:last-child]:mb-0
+            [&_ul]:list-disc
+            [&_ul]:pl-5
+            [&_ol]:list-decimal
+            [&_ol]:pl-5
+            [&_strong]:font-bold
+          "
+          dangerouslySetInnerHTML={{
+            __html: item.description,
+          }}
+        />
                       </motion.div>
                     ) : null
                   )}
