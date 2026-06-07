@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
 
-
 const getAssetUrl = (path) => {
   if (!path) return "/img/icon.svg";
   if (path.startsWith("http")) return path;
@@ -19,31 +18,38 @@ function AdventureAthletes({ data }) {
     return html.replace(/<[^>]*>/g, "").trim();
   };
 
-  const atletas = [1, 2, 3, 4, 5].map((i) => {
-    const name = stripHtml(
-      data?.texts?.[`athlete_${i}_name`]?.content
-    );
+  // Monta atletas dinamicamente com base nos assets existentes
+  const atletas = Object.keys(data?.assets || {})
+    .filter((key) => key.startsWith("asset_"))
+    .sort((a, b) => {
+      const numA = parseInt(a.replace("asset_", ""));
+      const numB = parseInt(b.replace("asset_", ""));
+      return numA - numB;
+    })
+    .map((key, index) => {
+      const base = index * 3 + 1;
 
-    const role = stripHtml(
-      data?.texts?.[`athlete_${i}_role`]?.content
-    );
-
-    const asset = data?.assets?.[`asset_${i}`];
-
-    return {
-      id: i,
-      nome: name || "Atleta",
-      texto: "Atleta Teiú Adventure",
-      esporte: role || "Esporte",
-      img: getAssetUrl(asset?.url),
-    };
-  });
+      return {
+        id: index + 1,
+        nome: stripHtml(
+          data?.texts?.[`event_${base}_title`]?.content
+        ),
+        texto: stripHtml(
+          data?.texts?.[`event_${base + 1}_title`]?.content
+        ),
+        esporte: stripHtml(
+          data?.texts?.[`event_${base + 2}_title`]?.content
+        ),
+        img: getAssetUrl(data?.assets?.[key]?.url),
+      };
+    })
+    .filter((atleta) => atleta.nome || atleta.img);
 
   useEffect(() => {
     if (atletas.length <= 3) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 3) % atletas.length);
+      setCurrentIndex((prev) => (prev + 3) % atletas.length);
     }, 5000);
 
     return () => clearInterval(interval);
@@ -61,6 +67,8 @@ function AdventureAthletes({ data }) {
 
   const visibleAthletes = getVisibleAthletes();
 
+  if (!atletas.length) return null;
+
   return (
     <section className="w-full pt-16 pb-12 px-6 lg:px-20 container mx-auto max-w-[1400px]">
       <h2 className="text-white text-3xl md:text-4xl font-bold mb-8">
@@ -74,7 +82,13 @@ function AdventureAthletes({ data }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className={`grid gap-6 ${
+            visibleAthletes.length === 1
+              ? "grid-cols-1 max-w-md mx-auto"
+              : visibleAthletes.length === 2
+              ? "grid-cols-1 md:grid-cols-2"
+              : "grid-cols-1 md:grid-cols-3"
+          }`}
         >
           {visibleAthletes.map((atleta) => (
             <div
