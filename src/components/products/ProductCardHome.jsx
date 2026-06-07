@@ -12,9 +12,19 @@ function ProductCardHome({ title, image, parentId, variantId }) {
     >
       
       <div className="z-10 text-center mb-6">
-        <h3 className="font-teiu font-bold text-2xl leading-tight text-teiu-primary-dark">
-          {title}
-        </h3>
+      <h3
+  className="
+    font-teiu
+    font-bold
+    text-2xl
+    leading-tight
+    text-teiu-primary-dark
+    line-clamp-2
+    capitalize
+  "
+>
+  {title?.toLowerCase()}
+</h3>
       </div>
 
       <div className="relative flex-grow w-full flex items-center justify-center">

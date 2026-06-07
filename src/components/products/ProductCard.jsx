@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* TÍTULO */}
-        <h2 className="text-xl font-bold text-center text-[#003366]">
+        <h2 className="min-w-0 w-full text-xl font-bold text-center text-[#003366] capitalize truncate">
           {product.title}
         </h2>
 
