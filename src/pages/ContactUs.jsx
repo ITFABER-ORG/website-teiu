@@ -40,7 +40,7 @@ function ConatctUs() {
     <>
     <Navbar/>
     <BannerContactSession data={pageData?.components?.banner_talk_to_us}  />
-    <ContactForm  data={pageData?.components?.talk_to_us_form}  />
+    <ContactForm  data={pageData?.components?.talk_to_us_form} email={pageData?.components?.banner_talk_to_us} />
     <div className="bg-gradient-to-br from-[#02D1FF] to-[#074B9A] pt-20 rounded-t-4xl">
         <Footer/>
     </div>

@@ -1,8 +1,20 @@
 import { useState, useEffect } from "react";
 
-function ContactForm({ data }) {
+function ContactForm({ data, email }) {
   const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
+  const[emailDestinatary, setEmail] = useState();
+  useEffect(() => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(
+      email?.texts?.email_value?.content || '',
+      'text/html'
+    );
+  
+    setEmail( doc.body.textContent || '');
+  }, [email]);
 
+  
 
   const [dataSection, setDataSection] = useState({
     img: "",
@@ -16,7 +28,16 @@ function ContactForm({ data }) {
     email: "",
     phone: "",
     message: "",
+    emailDestinatary:emailDestinatary
   });
+  useEffect(() => {
+    if (emailDestinatary) {
+      setFormData(prev => ({
+        ...prev,
+        emailDestinatary
+      }));
+    }
+  }, [emailDestinatary]);
 
   const [loading, setLoading] = useState(false);
   const [responseMsg, setResponseMsg] = useState("");
@@ -89,7 +110,7 @@ function ContactForm({ data }) {
     setResponseMsg("");
 
     try {
-      const response = await fetch(`${VITE_CMS_URL}/api/sendEmail`, {
+      const response = await fetch(`${API_URL}/api/sendEmail`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +120,7 @@ function ContactForm({ data }) {
 
       const result = await response.json();
 
-      console.log(result);
+      console.log('chegou',result);
 
       if (response.ok) {
         setResponseMsg(" Mensagem enviada com sucesso!");
@@ -109,6 +130,8 @@ function ContactForm({ data }) {
           email: "",
           phone: "",
           message: "",
+          emailDestinatary:emailDestinatary
+
         });
       } else {
         setResponseMsg(" Erro ao enviar mensagem.");
