@@ -52,16 +52,28 @@ const SidebarFilters = ({ filters, setFilters, options, isOpen, onClose }) => {
           <div className="grid grid-cols-2 gap-2">
             {Object.keys(brandLogos).map((brand) => (
               <button
-                key={brand}
-                onClick={() => handleSelect("brand", brand)}
-                className={`flex items-center justify-center p-2 h-16 rounded-xl border-2 cursor-pointer transition-all  ${filters.brand === brand
-                    ? "border-[#009FE3] bg-white shadow-md ring-1 ring-[#009FE3] scale-[1.02]"
-                    : "border-gray-50 bg-gray-50 hover:bg-white hover:border-gray-200"
-                  }`}
-              >
-               <span>{brand}</span>
-                
-              </button>
+              key={brand}
+              onClick={() => handleSelect("brand", brand)}
+              className={`relative flex items-center justify-center p-2 h-16 rounded-xl border-2 cursor-pointer transition-all ${
+                filters.brand === brand
+                  ? "border-[#009FE3] bg-white shadow-md ring-1 ring-[#009FE3] scale-[1.02]"
+                  : "border-gray-50 bg-gray-50 hover:bg-white hover:border-gray-200"
+              }`}
+            >
+              {filters.brand === brand && (
+                <div className="absolute top-1 right-1 bg-[#009FE3] rounded-full p-0.5">
+                  <Check size={12} className="text-white" />
+                </div>
+              )}
+            
+            <div className="flex items-center justify-center w-full h-full">
+              <img
+                src={brandLogos[brand]}
+                alt={brand}
+                className="max-w-full max-h-12 max-w-5 object-contain"
+              />
+            </div>
+            </button>
             ))}
           </div>
         </div>
