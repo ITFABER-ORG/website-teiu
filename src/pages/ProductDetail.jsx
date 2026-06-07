@@ -17,7 +17,9 @@ export default function ProductDetail() {
   const { id } = useParams();
   const location = useLocation();
 
-  const API_URL = import.meta.env.VITE_CMS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
+  const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
+
 
 
   const [product, setProduct] = useState(null);
@@ -28,12 +30,13 @@ export default function ProductDetail() {
     async function fetchProduct() {
       try {
         const response = await fetch(
-          `${API_URL}/api/products/${id}`
+          `${API_URL}/api/productsDetail/${id}`
         );
 
         const data =
           await response.json();
-
+          
+      console.log('o retorno é esse', data)
         setProduct(data);
       } catch (error) {
         console.error(
@@ -329,7 +332,7 @@ export default function ProductDetail() {
           }}
         >
           <motion.img
-            src={`${API_URL}/storage/${activeVariant?.image}`}
+            src={`${VITE_CMS_URL}/storage/${activeVariant?.image}`}
             animate={{
               y: [0, -10, 0],
             }}
@@ -478,7 +481,7 @@ export default function ProductDetail() {
 
       {/* Variantes */}
 
-      <div className="fixed bottom-0 left-0 w-full h-20 flex z-50 shadow-xl">
+      <div className="fixed bottom-0 left-0 w-full h-20 flex z-50 shadow-xl flex flex-col">
         {product.variants?.map(
           (variant) => (
             <button
@@ -521,79 +524,80 @@ export default function ProductDetail() {
       
 
       <div className="hidden md:block">
-        <div
-          className="
-        absolute
-        bottom-0
-        md:bottom-auto
-        md:top-0
-        right-0
-        w-full
-        md:w-32
-        h-20
-        md:h-full
-        flex
-        flex-row
-        md:flex-col
-        z-30
-        hidden md:block
+      <div
+  className="
+    absolute
+    top-0
+    right-0
+    w-32
+    h-full
+    flex
+    z-30
+  "
+>
+  {product?.variants?.map((variant) => (
+    <button
+      key={variant.id}
+      onClick={() => setActiveVariantId(variant.id)}
+      className={`
+        relative flex-1 overflow-hidden
+        transition-all duration-300 ease-out
+        hover:flex-[1.2]
+        hover:shadow-2xl
+        ${activeVariantId === variant.id ? "flex-[1.3]" : ""}
+      `}
+    >
+      <div
+        className="
+          w-full h-full
+          transition-all duration-300
+          hover:brightness-125
         "
+        style={{
+          backgroundColor: variant.color,
+        }}
+      />
+
+      {/* brilho animado */}
+      <div
+        className="
+          absolute inset-0
+          bg-gradient-to-b from-white/30 to-transparent
+          opacity-0 hover:opacity-100
+          transition-opacity duration-300
+        "
+      />
+
+      {/* indicador ativo */}
+      {activeVariantId === variant.id && (
+        <div className="absolute left-0 top-0 h-full w-1 bg-white shadow-lg" />
+      )}
+
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="
+            text-sm
+            text-white
+            font-medium
+            tracking-wider
+            [writing-mode:vertical-lr]
+            rotate-180
+            transition-transform duration-300
+            hover:scale-110
+          "
         >
-          {product?.variants?.map(
-            (
-              variant
-            ) => (
-              <button
-                key={
-                  variant.id
-                }
-                onClick={() =>
-                  setActiveVariantId(
-                    variant.id
-                  )
-                }
-                className={`flex-1 relative ${
-                  activeVariantId ===
-                  variant.id
-                    ? "flex-[2]"
-                    : ""
-                }`}
-              >
-                <div
-                  className="w-full h-full"
-                  style={{
-                    backgroundColor:
-                      variant.color,
-                  }}
-                />
-
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <ChevronRight className="w-4 h-4 text-white" />
-
-                  <span
-                    className="
-                text-xs
-                md:text-sm
-                text-white
-                md:[writing-mode:vertical-lr]
-                md:rotate-180
-                "
-                  >
-                    {
-                      variant.label
-                    }
-                  </span>
-                </div>
-              </button>
-            )
-          )}
-        </div>
+          {variant.label}
+        </span>
+      </div>
+    </button>
+  ))}
+</div>
 
         {/* Imagem */}
 
         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
           <motion.img
-            src={`${API_URL}/storage/${activeVariant?.image}`}
+            src={`${VITE_CMS_URL}/storage/${activeVariant?.image}`}
             style={{
               scale:
                 scaleImg,
