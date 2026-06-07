@@ -13,12 +13,12 @@ class ProductsController extends Controller
         private ProductService $service
     ) {}
 
-    public function index()
-    {
-        return response()->json(
-            $this->service->list()
-        );
-    }
+    public function index($language)
+{
+    return response()->json(
+        $this->service->list($language)
+    );
+}
     public function getProductById($id)
 {
     return response()->json(
@@ -83,4 +83,5 @@ class ProductsController extends Controller
             })
             ->get();
     }
+    
 }

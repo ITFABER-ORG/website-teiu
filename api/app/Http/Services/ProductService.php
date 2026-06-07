@@ -37,48 +37,51 @@ class ProductService
         'tagline' => $product->tagline,
         'category' => $product->category,
         'volume' => $product->volume,
-        'brand' => 'Teiú',
+        'brand' => $product->brand,
+        'description' => $product->description,
         'usage' => $product->used,
         'specs' => $specs,
         'defaultVariantId' => $variants->first()['id'] ?? null,
         'variants' => $variants,
     ];
 }
-    public function list()
-    {
-        $products = Product::with('variations')
+public function list($language)
+{
+    $products = Product::with('variations')
         ->where('status', 'in_production')
+        ->where('language', $language)
         ->get();
 
-        return $products->map(function ($product) {
+    return $products->map(function ($product) {
 
-            $specs = json_decode($product->specs_json, true);
+        $specs = json_decode($product->specs_json, true);
 
-            $variants = $product->variations->map(function ($variation) use ($product) {
-                return [
-                    'id' => $variation->id,
-                    'label' => $variation->label,
-                    'color' => $variation->color,
-                    'textColor' => $variation->color,
-                    'image' => $variation->url_image,
-                    'volume' => $product->volume,
-                    'featured' => (bool) $variation->emphasis,
-                ];
-            });
-
+        $variants = $product->variations->map(function ($variation) use ($product) {
             return [
-                'id' => $product->id,
-                'title' => $product->title,
-                'tagline' => $product->tagline,
-                'category' => $product->category,
+                'id' => $variation->id,
+                'label' => $variation->label,
+                'color' => $variation->color,
+                'textColor' => $variation->color,
+                'image' => $variation->url_image,
                 'volume' => $product->volume,
-                'brand' =>  'Teiú',
-                'usage' => $product->used,
-                'specs' => $specs,
-                'defaultVariantId' => $variants->first()['id'] ?? null,
-                'variants' => $variants,
+                'featured' => (bool) $variation->emphasis,
             ];
         });
-    }
+
+        return [
+            'id' => $product->id,
+            'title' => $product->title,
+            'tagline' => $product->tagline,
+            'category' => $product->category,
+            'volume' => $product->volume,
+            'brand' => $product->brand,
+            'usage' => $product->used,
+            'language' => $product->language,
+            'specs' => $specs,
+            'defaultVariantId' => $variants->first()['id'] ?? null,
+            'variants' => $variants,
+        ];
+    });
+}
 
 }

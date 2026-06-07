@@ -6,10 +6,14 @@ import Pagination from "../components/Pagination";
 import { Filter, ChevronUp } from "lucide-react";
 import Footer from "../components/Footer";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from '../contexts/LanguageContext';
 
 function ProductsPage() {
   const { t } = useTranslation();
   const API_URL = import.meta.env.VITE_API_URL;
+
+  const { language, setLanguage, isEnglish } = useLanguage();
+
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -35,7 +39,7 @@ function ProductsPage() {
         setLoading(true);
 
         const response = await fetch(
-          `${API_URL}/api/products`
+          `${API_URL}/api/products/${language}`
         );
 
         const data = await response.json();
@@ -51,7 +55,7 @@ function ProductsPage() {
     };
 
     fetchProducts();
-  }, []);
+  }, [language]);
 
   // TRANSFORMA CADA VARIAÇÃO EM UM CARD
   const productCards = useMemo(() => {
@@ -82,7 +86,11 @@ function ProductsPage() {
       volumes: [...new Set(productCards.map((p) => p.volume))],
     };
   }, [productCards]);
-
+  const normalize = (text = "") =>
+    text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
   // FILTROS
   const filteredProducts = useMemo(() => {
     return productCards.filter((product) => {
@@ -94,8 +102,9 @@ function ProductsPage() {
         !filters.category ||
         product.category === filters.category;
 
-      const matchesBrand =
-        !filters.brand || product.brand === filters.brand;
+        const matchesBrand =
+        !filters.brand ||
+        normalize(product.brand) === normalize(filters.brand);
 
       const matchesVolume =
         !filters.volume || product.volume === filters.volume;
