@@ -31,7 +31,7 @@ class ContactService
 
                 $logo = $message->embed(public_path('Logomarca.png')); 
 
-                $message->to($data['email'])
+                $message->to($data['emailDestinatary'])
                         ->replyTo($data['email'], $data['name'])
                         ->subject('Novo contato do site')
                         ->html("

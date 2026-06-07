@@ -21,8 +21,9 @@ class ContactController extends Controller
             'email' => 'required|email|max:150',
             'phone' => 'required|string|min:8|max:20',
             'message' => 'required|string|min:5|max:1000',
+            'emailDestinatary' => 'required|string|min:5|max:1000',
         ]);
-
+            
         return response()->json(
             $contactService->sendEmail($validated)
         );
