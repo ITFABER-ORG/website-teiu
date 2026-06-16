@@ -5,7 +5,7 @@ use App\Models\Pages;
 
 use Illuminate\Http\Request;
 
-class pageController extends Controller
+class PageController extends Controller
 {
     public function index(Request $request, $path)
     {
