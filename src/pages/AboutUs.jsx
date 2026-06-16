@@ -38,7 +38,7 @@ function AboutUs() {
         fetchPage();
       }, [language]);
       useEffect(()=> {
-        console.log('aaaaaaaaaaaaaaaaaa',pageData)
+        console.log(pageData)
       },[pageData])
     return ( 
     <>
