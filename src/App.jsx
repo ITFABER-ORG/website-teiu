@@ -9,10 +9,12 @@ import ConatctUs from "./pages/ContactUs";
 import SustentabilidadePage from "./pages/SustentabilidadePage";
 import TeiuAdventure from "./pages/TeiuAdventure";
 import AcessibilidadeBar from "./components/acessibilidade/AcessibilidadeBar";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AcessibilidadeBar />
       <Routes>
         <Route path="/" element={<Home />} />
