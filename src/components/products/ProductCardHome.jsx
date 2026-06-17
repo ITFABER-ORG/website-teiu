@@ -31,7 +31,8 @@ function ProductCardHome({ title, image, parentId, variantId }) {
         {image ? (
           <img 
             className="h-full w-auto object-contain transition-all duration-500 ease-in-out 
-                       group-hover:scale-[1.06] 
+                       group-hover:scale-[0.8] 
+                       group-hover:-translate-y-8 
                        group-hover:drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)]" 
             src={image} 
             alt={title} 
