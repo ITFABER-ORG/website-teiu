@@ -8,7 +8,6 @@ import {
 import { useLocation, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import UsageModesTabs from "../components/UsageModesTabs";
-import { usageModesMock } from "../mocks/usageModesMock";
 
 function clamp01(t) {
   return Math.max(0, Math.min(1, t));
@@ -172,7 +171,7 @@ export default function ProductDetail() {
     product?.variants?.find((v) => v.id === activeVariantId) ||
     product?.variants?.[0];
 
-  const usageModes = usageModesMock[id] || [];
+  const usageModes = product?.usage || [];
 
   return (
     <>
