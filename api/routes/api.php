@@ -6,7 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductsController;
 
 Route::get('/products/{language}', [ProductsController::class, 'index']);
-Route::get('/productsDetail/{id}', [ProductsController::class, 'getProductbyId']);
+Route::get('/productsDetail/{id}', [ProductsController::class, 'getProductById']);
 
 Route::get('/test', [ContactController::class, 'test']);
 Route::post('/sendEmail', [ContactController::class, 'sendEmail']);
