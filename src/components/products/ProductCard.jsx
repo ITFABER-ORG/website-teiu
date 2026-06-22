@@ -9,6 +9,8 @@ const ProductCard = ({ product }) => {
 
   if (!variant) return null;
 
+  const hasValidImage = variant.image && variant.image !== "no-image.jpg";
+
   return (
     <Link
       to={`/produto/${product.id}`}
@@ -34,16 +36,22 @@ const ProductCard = ({ product }) => {
         {/* IMAGEM */}
         <div className="w-full flex justify-center mb-5 h-[220px] overflow-visible relative z-10">
 
-          <img
-            src={`${VITE_CMS_URL}/storage/${variant.image}`}
-            alt={product.title}
-            className="
-              h-full w-auto object-contain
-              transition-transform duration-500 ease-in-out
-              group-hover:scale-110
-              filter drop-shadow-[8px_15px_15px_rgba(0,0,0,0.2)]
-            "
-          />
+          {hasValidImage ? (
+            <img
+              src={`${VITE_CMS_URL}/storage/${variant.image}`}
+              alt={product.title}
+              className="
+                h-full w-auto object-contain
+                transition-transform duration-500 ease-in-out
+                group-hover:scale-110
+                filter drop-shadow-[8px_15px_15px_rgba(0,0,0,0.2)]
+              "
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-gray-100 rounded-2xl text-gray-400 text-sm text-center px-4">
+              Imagem não disponível
+            </div>
+          )}
 
         </div>
 
