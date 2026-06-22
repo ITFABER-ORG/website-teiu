@@ -69,7 +69,7 @@ function UsageModesTabs({ modes, variant = "card", isActive = true }) {
     <div className={wrapperClass} onWheel={(e) => e.stopPropagation()}>
       <h2 className={titleClass}>Modo de uso</h2>
 
-      <div className="flex items-center gap-2 sm:gap-3 mb-6">
+      <div className="flex items-center gap-2 sm:gap-3 mb-6 w-fit max-w-full">
         {canScrollLeft && (
           <button
             type="button"
