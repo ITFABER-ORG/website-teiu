@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   motion,
   useMotionValue,
@@ -6,8 +6,8 @@ import {
   animate,
 } from "framer-motion";
 import { useLocation, useParams } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
 import Navbar from "../components/Navbar";
+import UsageModesTabs from "../components/UsageModesTabs";
 
 function clamp01(t) {
   return Math.max(0, Math.min(1, t));
@@ -21,15 +21,20 @@ export default function ProductDetail() {
   const VITE_CMS_URL = import.meta.env.VITE_CMS_URL;
 
   const [product, setProduct] = useState(null);
-  const [selectedUsage, setSelectedUsage] = useState(0);
   const [activeVariantId, setActiveVariantId] = useState(null);
+  const [usageActive, setUsageActive] = useState(false);
+
+  const progressMV = useMotionValue(0);
+  const progressRef = useRef(0);
+
+  const [isAnimationDone, setIsAnimationDone] = useState(false);
+  const [isReversing, setIsReversing] = useState(false);
 
   useEffect(() => {
     async function fetchProduct() {
       try {
         const response = await fetch(`${API_URL}/api/productsDetail/${id}`);
         const data = await response.json();
-        console.log("o retorno é esse", data);
         setProduct(data);
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
@@ -48,12 +53,6 @@ export default function ProductDetail() {
       );
     }
   }, [product, location.state]);
-
-  const progressMV = useMotionValue(0);
-  const progressRef = useRef(0);
-
-  const [isAnimationDone, setIsAnimationDone] = useState(false);
-  const [isReversing, setIsReversing] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -127,18 +126,11 @@ export default function ProductDetail() {
     return () => window.removeEventListener("wheel", onWheel);
   }, [isAnimationDone, isReversing, progressMV]);
 
-  const scaleImg = useTransform(
-    progressMV,
-    [0, 0.2, 0.42, 1],
-    [1.25, 1, 0.5, 1]
-  );
-
+  const scaleImg = useTransform(progressMV, [0, 0.2, 0.42, 1], [1.25, 1, 0.5, 1]);
   const xImg = useTransform(progressMV, [0.28, 0.2], ["20vw", "-25vw"]);
-
   const yImg = useTransform(progressMV, [0, 0.3, 1], [150, 80, 80]);
 
   const opacityHeroText = useTransform(progressMV, [0, 0.28], [1, 0]);
-
   const yHeroText = useTransform(progressMV, [0, 0.28], [0, -20]);
 
   const opacityDescription = useTransform(
@@ -155,6 +147,34 @@ export default function ProductDetail() {
 
   const opacityDetails = useTransform(progressMV, [0.8, 0.9, 1], [0, 1, 1]);
 
+  const peHeroText = useTransform(opacityHeroText, (v) => (v > 0.5 ? "auto" : "none"));
+  const peDescription = useTransform(opacityDescription, (v) => (v > 0.5 ? "auto" : "none"));
+  const peUsage = useTransform(opacityUsage, (v) => (v > 0.5 ? "auto" : "none"));
+  const peDetails = useTransform(opacityDetails, (v) => (v > 0.5 ? "auto" : "none"));
+
+  useEffect(() => {
+    const unsubscribe = opacityUsage.on("change", (v) => {
+      setUsageActive(v > 0.5);
+    });
+
+    return () => unsubscribe();
+  }, [opacityUsage]);
+  const usageModes = React.useMemo(() => {
+    const raw = product?.usage;
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw;
+    if (typeof raw === "string") {
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.error("Erro ao fazer parse de product.usage:", e);
+        return [];
+      }
+    }
+    return [];
+  }, [product]);
+
   if (!product)
     return (
       <div className="w-screen h-screen flex items-center justify-center">
@@ -162,31 +182,17 @@ export default function ProductDetail() {
       </div>
     );
 
-  const usageSteps = (() => {
-    if (!product?.usage) return [];
-
-    if (Array.isArray(product.usage)) {
-      return product.usage;
-    }
-
-    try {
-      return JSON.parse(product.usage);
-    } catch (e) {
-      console.error("Erro ao converter usage:", e);
-      return [];
-    }
-  })();
-
   const activeVariant =
     product?.variants?.find((v) => v.id === activeVariantId) ||
     product?.variants?.[0];
+
+    
 
   return (
     <>
       <div className="relative w-screen min-h-screen overflow-hidden bg-white">
         <Navbar />
 
-        {/* ================= MOBILE ================= */}
         <div className="md:hidden min-h-screen pb-28">
           {/* Hero */}
           <div className="relative flex flex-col items-center px-6 pt-24">
@@ -225,7 +231,7 @@ export default function ProductDetail() {
 
           {/* Conteúdo */}
           <div className="px-5 mt-10 flex flex-col gap-6">
-            {/* descrição */}
+            {/* Descrição */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -239,60 +245,17 @@ export default function ProductDetail() {
               <p className="opacity-70">{product.description}</p>
             </motion.div>
 
-            {/* modo uso */}
+            {/* Modo de uso */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.15 }}
-              className="rounded-3xl p-6 shadow-lg bg-white"
             >
-              <h2 className="text-2xl font-bold text-teiu-deep-blue mb-5">
-                Modo de uso
-              </h2>
-
-              <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-                {usageSteps.map((item, index) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setSelectedUsage(index)}
-                    className={`
-                      whitespace-nowrap
-                      px-5 py-2.5
-                      rounded-full
-                      border
-                      transition-all
-                      duration-300
-                      font-medium
-                      ${
-                        selectedUsage === index
-                          ? "bg-teiu-deep-blue text-white border-teiu-deep-blue shadow-lg scale-105"
-                          : "bg-white text-teiu-deep-blue border-slate-300 hover:border-teiu-deep-blue hover:bg-slate-50"
-                      }
-                    `}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-
-              <motion.div
-                key={selectedUsage}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6"
-              >
-                <div
-                  className="prose max-w-none"
-                  dangerouslySetInnerHTML={{
-                    __html: usageSteps[selectedUsage]?.content || "",
-                  }}
-                />
-              </motion.div>
+              <UsageModesTabs modes={usageModes} />
             </motion.div>
 
-            {/* specs */}
+            {/* Specs */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -324,13 +287,14 @@ export default function ProductDetail() {
           </div>
 
           {/* Variantes (mobile) */}
-          <div className="fixed bottom-0 left-0 w-full h-20 flex z-50 shadow-xl flex flex-col">
+          <div className="fixed bottom-0 left-0 w-full h-20 flex z-50 shadow-xl flex-col">
             {product.variants?.map((variant) => (
               <button
                 key={variant.id}
                 onClick={() => setActiveVariantId(variant.id)}
-                className={`flex-1 relative transition-all
-                ${activeVariantId === variant.id ? "flex-[1.5]" : ""}`}
+                className={`flex-1 relative transition-all ${
+                  activeVariantId === variant.id ? "flex-[1.5]" : ""
+                }`}
               >
                 <div
                   className="w-full h-full"
@@ -347,7 +311,7 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* ================= DESKTOP ================= */}
+        {/* DESKTOP */}
         <div className="hidden md:block">
           {/* Variantes (desktop) */}
           <div className="absolute top-0 right-0 w-32 h-full flex z-30">
@@ -355,47 +319,23 @@ export default function ProductDetail() {
               <button
                 key={variant.id}
                 onClick={() => setActiveVariantId(variant.id)}
-                className={`
-                  relative flex-1 overflow-hidden
-                  transition-all duration-300 ease-out
-                  hover:flex-[1.2]
-                  hover:shadow-2xl
-                  ${activeVariantId === variant.id ? "flex-[1.3]" : ""}
-                `}
+                className={`relative flex-1 overflow-hidden transition-all duration-300 ease-out hover:flex-[1.2] hover:shadow-2xl ${
+                  activeVariantId === variant.id ? "flex-[1.3]" : ""
+                }`}
               >
                 <div
                   className="w-full h-full transition-all duration-300 hover:brightness-125"
                   style={{ backgroundColor: variant.color }}
                 />
 
-                {/* brilho animado */}
-                <div
-                  className="
-                    absolute inset-0
-                    bg-gradient-to-b from-white/30 to-transparent
-                    opacity-0 hover:opacity-100
-                    transition-opacity duration-300
-                  "
-                />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
 
-                {/* indicador ativo */}
                 {activeVariantId === variant.id && (
                   <div className="absolute left-0 top-0 h-full w-1 bg-white shadow-lg" />
                 )}
 
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span
-                    className="
-                      text-sm
-                      text-white
-                      font-medium
-                      tracking-wider
-                      [writing-mode:vertical-lr]
-                      rotate-180
-                      transition-transform duration-300
-                      hover:scale-110
-                    "
-                  >
+                  <span className="text-sm text-white font-medium tracking-wider [writing-mode:vertical-lr] rotate-180 transition-transform duration-300 hover:scale-110">
                     {variant.label}
                   </span>
                 </div>
@@ -408,33 +348,18 @@ export default function ProductDetail() {
             <motion.img
               src={`${VITE_CMS_URL}/storage/${activeVariant?.image}`}
               style={{ scale: scaleImg, x: xImg, y: yImg }}
-              className="
-                h-[250px]
-                sm:h-[350px]
-                md:h-[500px]
-                lg:h-[700px]
-                xl:h-[800px]
-                object-contain
-              "
+              className="h-[250px] sm:h-[350px] md:h-[500px] lg:h-[700px] xl:h-[800px] object-contain"
             />
           </div>
 
           {/* Hero */}
           <motion.div
-            className="
-              absolute
-              top-[15%]
-              md:top-1/2
-              right-4
-              md:right-10
-              lg:right-32
-              md:-translate-y-1/2
-              w-[90%]
-              md:w-5/12
-              px-4
-              z-10
-            "
-            style={{ opacity: opacityHeroText, y: yHeroText }}
+            className="absolute top-[15%] md:top-1/2 right-4 md:right-10 lg:right-32 md:-translate-y-1/2 w-[90%] md:w-5/12 px-4 z-10"
+            style={{
+              opacity: opacityHeroText,
+              y: yHeroText,
+              pointerEvents: peHeroText,
+            }}
           >
             <span className="uppercase text-sm md:text-base text-teiu-deep-blue">
               {product.category}
@@ -451,19 +376,11 @@ export default function ProductDetail() {
 
           {/* Descrição */}
           <motion.div
-            className="
-              absolute
-              left-4
-              sm:left-8
-              lg:left-24
-              top-[55%]
-              md:top-1/2
-              md:-translate-y-1/2
-              w-[90%]
-              md:w-5/12
-              z-10
-            "
-            style={{ opacity: opacityDescription, pointerEvents: "none" }}
+            className="absolute left-4 sm:left-8 lg:left-24 top-[55%] md:top-1/2 md:-translate-y-1/2 w-[90%] md:w-5/12 z-10"
+            style={{
+              opacity: opacityDescription,
+              pointerEvents: peDescription,
+            }}
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-teiu-deep-blue">
               Descrição
@@ -474,83 +391,28 @@ export default function ProductDetail() {
             </p>
           </motion.div>
 
-          {/* Modo de uso (com botões e conteúdo parseado) */}
+          {/* Modo de uso */}
           <motion.div
-            className="
-              absolute
-              left-4
-              sm:left-8
-              lg:left-24
-              top-[55%]
-              md:top-1/2
-              md:-translate-y-1/2
-              w-[90%]
-              md:w-5/12
-              z-10
-            "
+            className="absolute left-4 sm:left-8 lg:left-24 top-[55%] md:top-1/2 md:-translate-y-1/2 w-[90%] md:w-5/12 z-10"
             style={{
               opacity: opacityUsage,
-              pointerEvents: "none",
+              pointerEvents: peUsage,
             }}
           >
-            <div style={{ pointerEvents: "auto" }}>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-teiu-deep-blue">
-                Modo de uso
-              </h2>
-
-              <div className="flex gap-3 flex-wrap mb-6">
-                {usageSteps.map((item, index) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setSelectedUsage(index)}
-                    className={`
-                      whitespace-nowrap
-                      px-5 py-2.5
-                      rounded-full
-                      border
-                      transition-all
-                      duration-300
-                      font-medium
-                      ${
-                        selectedUsage === index
-                          ? "bg-teiu-deep-blue text-white border-teiu-deep-blue shadow-lg scale-105"
-                          : "bg-white text-teiu-deep-blue border-slate-300 hover:border-teiu-deep-blue hover:bg-slate-50"
-                      }
-                    `}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-
-              <motion.div
-                key={selectedUsage}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="prose max-w-none text-sm sm:text-base md:text-lg lg:text-xl text-teiu-deep-blue opacity-90"
-                dangerouslySetInnerHTML={{
-                  __html: usageSteps[selectedUsage]?.content || "",
-                }}
-              />
-            </div>
+            <UsageModesTabs
+              modes={usageModes}
+              variant="plain"
+              isActive={usageActive}
+            />
           </motion.div>
 
           {/* Specs */}
           <motion.div
-            className="
-              absolute
-              left-4
-              sm:left-8
-              lg:left-24
-              top-[55%]
-              md:top-1/2
-              md:-translate-y-1/2
-              w-[90%]
-              md:w-5/12
-              z-10
-            "
-            style={{ opacity: opacityDetails, pointerEvents: "none" }}
+            className="absolute left-4 sm:left-8 lg:left-24 top-[55%] md:top-1/2 md:-translate-y-1/2 w-[90%] md:w-5/12 z-10"
+            style={{
+              opacity: opacityDetails,
+              pointerEvents: peDetails,
+            }}
           >
             <div className="flex flex-col gap-6">
               {product?.specs?.map((item, i) => (

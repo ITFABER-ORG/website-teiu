@@ -80,8 +80,16 @@ function Footer() {
             <h4 className="font-bold text-base mb-5 uppercase tracking-wider font-teiu">
               {t('footer.contato', 'Contato')}
             </h4>
+            
 
             <ul className="flex flex-col gap-3 text-white/80 font-light font-teiu">
+            <a
+                href="https://ouvidoria.teiu.com.br/"
+                target="_blank"
+                rel="noreferrer"
+              >
+              Canal de Ouvidoria
+                </a>
               {getText('phone_value') && (
                 <li className="hover:text-white transition-colors cursor-default">
                   {getText('phone_value')}
